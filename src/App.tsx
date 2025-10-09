@@ -3,6 +3,7 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import AdminRoute from "./components/AdminRoute";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Home from "./pages/Home";
@@ -48,12 +49,12 @@ const App = () => (
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/" element={<Home />} />
-          <Route path="/admin" element={<AdminHome />} />
-          <Route path="/admin/customer-support" element={<AdminCustomerSupport />} />
-          <Route path="/admin/users" element={<AdminUsers />} />
-          <Route path="/admin/withdraw-orders" element={<AdminWithdrawOrders />} />
-          <Route path="/admin/recharge-record" element={<AdminRechargeRecord />} />
-          <Route path="/admin/system-bonus" element={<AdminSystemBonus />} />
+          <Route path="/admin" element={<AdminRoute><AdminHome /></AdminRoute>} />
+          <Route path="/admin/customer-support" element={<AdminRoute><AdminCustomerSupport /></AdminRoute>} />
+          <Route path="/admin/users" element={<AdminRoute><AdminUsers /></AdminRoute>} />
+          <Route path="/admin/withdraw-orders" element={<AdminRoute><AdminWithdrawOrders /></AdminRoute>} />
+          <Route path="/admin/recharge-record" element={<AdminRoute><AdminRechargeRecord /></AdminRoute>} />
+          <Route path="/admin/system-bonus" element={<AdminRoute><AdminSystemBonus /></AdminRoute>} />
           <Route path="/lucky-draw" element={<LuckyDraw />} />
           <Route path="/my-prizes" element={<MyPrizes />} />
           <Route path="/invest" element={<Invest />} />
