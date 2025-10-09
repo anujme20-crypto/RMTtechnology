@@ -14,16 +14,380 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      bank_cards: {
+        Row: {
+          account_number: string
+          bank_name: string
+          card_holder_name: string
+          created_at: string | null
+          id: string
+          ifsc_code: string
+          user_id: string
+        }
+        Insert: {
+          account_number: string
+          bank_name: string
+          card_holder_name: string
+          created_at?: string | null
+          id?: string
+          ifsc_code: string
+          user_id: string
+        }
+        Update: {
+          account_number?: string
+          bank_name?: string
+          card_holder_name?: string
+          created_at?: string | null
+          id?: string
+          ifsc_code?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      blog_posts: {
+        Row: {
+          created_at: string | null
+          id: string
+          image_url: string
+          reward_amount: number
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          image_url: string
+          reward_amount: number
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          image_url?: string
+          reward_amount?: number
+          user_id?: string
+        }
+        Relationships: []
+      }
+      prizes: {
+        Row: {
+          created_at: string | null
+          id: string
+          reward_amount: number | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          reward_amount?: number | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          reward_amount?: number | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      products: {
+        Row: {
+          category: string
+          created_at: string | null
+          daily_earnings: number
+          id: string
+          maximum_purchase: number
+          name: string
+          price: number
+          revenue_days: number
+          total_revenue: number
+          vip_level: number
+        }
+        Insert: {
+          category: string
+          created_at?: string | null
+          daily_earnings: number
+          id?: string
+          maximum_purchase: number
+          name: string
+          price: number
+          revenue_days: number
+          total_revenue: number
+          vip_level: number
+        }
+        Update: {
+          category?: string
+          created_at?: string | null
+          daily_earnings?: number
+          id?: string
+          maximum_purchase?: number
+          name?: string
+          price?: number
+          revenue_days?: number
+          total_revenue?: number
+          vip_level?: number
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          created_at: string | null
+          encrypted_password: string | null
+          encrypted_trade_password: string | null
+          full_name: string
+          id: string
+          invite_code: string
+          invited_by: string | null
+          last_checkin_date: string | null
+          last_welfare_income_date: string | null
+          mobile_number: string
+          product_income: number | null
+          recharge_balance: number | null
+          spin_chances: number | null
+          total_commission: number | null
+          trade_password: string
+          updated_at: string | null
+          user_id: string
+          withdrawal_balance: number | null
+        }
+        Insert: {
+          created_at?: string | null
+          encrypted_password?: string | null
+          encrypted_trade_password?: string | null
+          full_name: string
+          id?: string
+          invite_code: string
+          invited_by?: string | null
+          last_checkin_date?: string | null
+          last_welfare_income_date?: string | null
+          mobile_number: string
+          product_income?: number | null
+          recharge_balance?: number | null
+          spin_chances?: number | null
+          total_commission?: number | null
+          trade_password: string
+          updated_at?: string | null
+          user_id: string
+          withdrawal_balance?: number | null
+        }
+        Update: {
+          created_at?: string | null
+          encrypted_password?: string | null
+          encrypted_trade_password?: string | null
+          full_name?: string
+          id?: string
+          invite_code?: string
+          invited_by?: string | null
+          last_checkin_date?: string | null
+          last_welfare_income_date?: string | null
+          mobile_number?: string
+          product_income?: number | null
+          recharge_balance?: number | null
+          spin_chances?: number | null
+          total_commission?: number | null
+          trade_password?: string
+          updated_at?: string | null
+          user_id?: string
+          withdrawal_balance?: number | null
+        }
+        Relationships: []
+      }
+      recharge_requests: {
+        Row: {
+          amount: number
+          created_at: string | null
+          id: string
+          status: string | null
+          upi_id: string
+          user_id: string
+          utr_number: string
+        }
+        Insert: {
+          amount: number
+          created_at?: string | null
+          id?: string
+          status?: string | null
+          upi_id: string
+          user_id: string
+          utr_number: string
+        }
+        Update: {
+          amount?: number
+          created_at?: string | null
+          id?: string
+          status?: string | null
+          upi_id?: string
+          user_id?: string
+          utr_number?: string
+        }
+        Relationships: []
+      }
+      support_messages: {
+        Row: {
+          created_at: string | null
+          id: string
+          message: string
+          sender_type: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          message: string
+          sender_type: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          message?: string
+          sender_type?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      transactions: {
+        Row: {
+          amount: number
+          balance_type: string
+          created_at: string | null
+          description: string | null
+          id: string
+          status: string | null
+          transaction_type: string
+          user_id: string
+          utr_number: string | null
+        }
+        Insert: {
+          amount: number
+          balance_type: string
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          status?: string | null
+          transaction_type: string
+          user_id: string
+          utr_number?: string | null
+        }
+        Update: {
+          amount?: number
+          balance_type?: string
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          status?: string | null
+          transaction_type?: string
+          user_id?: string
+          utr_number?: string | null
+        }
+        Relationships: []
+      }
+      user_products: {
+        Row: {
+          created_at: string | null
+          days_remaining: number
+          expiry_date: string
+          id: string
+          is_active: boolean | null
+          product_id: string
+          purchase_date: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          days_remaining: number
+          expiry_date: string
+          id?: string
+          is_active?: boolean | null
+          product_id: string
+          purchase_date?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          days_remaining?: number
+          expiry_date?: string
+          id?: string
+          is_active?: boolean | null
+          product_id?: string
+          purchase_date?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_products_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      user_roles: {
+        Row: {
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          id?: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
+      withdrawal_requests: {
+        Row: {
+          amount: number
+          created_at: string | null
+          final_amount: number
+          id: string
+          processed_at: string | null
+          status: string | null
+          tax_amount: number
+          user_id: string
+        }
+        Insert: {
+          amount: number
+          created_at?: string | null
+          final_amount: number
+          id?: string
+          processed_at?: string | null
+          status?: string | null
+          tax_amount: number
+          user_id: string
+        }
+        Update: {
+          amount?: number
+          created_at?: string | null
+          final_amount?: number
+          id?: string
+          processed_at?: string | null
+          status?: string | null
+          tax_amount?: number
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
     }
     Enums: {
-      [_ in never]: never
+      app_role: "admin" | "user"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +514,8 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: ["admin", "user"],
+    },
   },
 } as const
