@@ -127,13 +127,7 @@ const Login = () => {
         .eq("mobile_number", mobileNumber)
         .maybeSingle();
 
-      if (!profile) {
-        toast.error("Invalid mobile number or password");
-        setLoading(false);
-        return;
-      }
-
-      // Sign in with Supabase auth
+      // Sign in with Supabase auth (don't fail if profile doesn't exist yet)
       const emailToUse = isAdminCredentials ? `admin62687337@ramanna.app` : `${mobileNumber}@ramanna.app`;
       const { data, error } = await supabase.auth.signInWithPassword({
         email: emailToUse,
@@ -142,16 +136,26 @@ const Login = () => {
 
       if (error) {
         console.error("Login error:", error);
-        toast.error("Invalid mobile number or password");
+        
+        // Better error messages
+        if (error.message.includes("Email not confirmed")) {
+          toast.error("Please verify your email first");
+        } else if (error.message.includes("Invalid login credentials")) {
+          toast.error("Invalid mobile number or password");
+        } else {
+          toast.error("Login failed. Please try again.");
+        }
+        
         setLoading(false);
         return;
       }
 
       // Verify session was created
       if (data?.session) {
-        // Store session marker for 1 month persistence
+        // Session is automatically persisted by Supabase with auto-refresh enabled
+        // Store 30-day expiry marker for UI purposes only
         const expiryDate = new Date();
-        expiryDate.setMonth(expiryDate.getMonth() + 1);
+        expiryDate.setDate(expiryDate.getDate() + 30);
         localStorage.setItem('sessionExpiry', expiryDate.toISOString());
         
         toast.success("Login successful!");

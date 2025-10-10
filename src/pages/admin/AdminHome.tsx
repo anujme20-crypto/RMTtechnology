@@ -1,13 +1,15 @@
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
-import { MessageSquare, Users, ArrowDownToLine, CreditCard, Gift } from "lucide-react";
+import { MessageSquare, Users, ArrowDownToLine, CreditCard, Gift, ImagePlus } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { ImageUploadPopup } from "@/components/admin/ImageUploadPopup";
 
 const AdminHome = () => {
   const navigate = useNavigate();
   const [isVerifying, setIsVerifying] = useState(true);
+  const [showImageUpload, setShowImageUpload] = useState(false);
 
   useEffect(() => {
     const verifyAdmin = async () => {
@@ -47,6 +49,12 @@ const AdminHome = () => {
 
     verifyAdmin();
   }, [navigate]);
+
+  const handleImageSubmit = (imageFile: File) => {
+    // Handle the uploaded image here
+    toast.success(`Image uploaded: ${imageFile.name}`);
+    // Add your logic here (e.g., upload to storage, save to database)
+  };
 
   if (isVerifying) {
     return (
@@ -104,6 +112,14 @@ const AdminHome = () => {
         </Button>
 
         <Button
+          onClick={() => setShowImageUpload(true)}
+          className="w-full h-20 text-lg bg-gradient-to-r from-primary to-accent"
+        >
+          <ImagePlus className="mr-2 h-6 w-6" />
+          Upload Image
+        </Button>
+
+        <Button
           onClick={async () => {
             await supabase.auth.signOut();
             localStorage.removeItem('isAdmin');
@@ -116,6 +132,12 @@ const AdminHome = () => {
           Logout
         </Button>
       </div>
+
+      <ImageUploadPopup
+        open={showImageUpload}
+        onOpenChange={setShowImageUpload}
+        onSubmit={handleImageSubmit}
+      />
     </div>
   );
 };

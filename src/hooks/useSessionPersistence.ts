@@ -6,7 +6,7 @@ export const useSessionPersistence = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Check if session has expired (1 month check)
+    // Check if session has expired (30 day check)
     const checkSessionExpiry = () => {
       const expiryDate = localStorage.getItem('sessionExpiry');
       if (expiryDate) {
