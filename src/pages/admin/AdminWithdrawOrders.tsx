@@ -76,13 +76,13 @@ const AdminWithdrawOrders = () => {
     if (data) setWithdrawals(data as any);
   };
 
-  const updateStatus = async (status: "processing" | "completed" | "rejected") => {
+  const updateStatus = async (newStatus: string) => {
     if (!selectedWithdrawal) return;
 
     const { error } = await supabase
       .from("withdrawal_requests")
       .update({ 
-        status,
+        status: newStatus,
         processed_at: new Date().toISOString()
       })
       .eq("id", selectedWithdrawal.id);
@@ -92,8 +92,8 @@ const AdminWithdrawOrders = () => {
       return;
     }
 
-    // If completed, deduct from withdrawal balance and create transaction record
-    if (status === "completed") {
+    // If Success, deduct from withdrawal balance and create transaction record
+    if (newStatus === "Success") {
       const { data: profile } = await supabase
         .from("profiles")
         .select("withdrawal_balance")
@@ -120,25 +120,7 @@ const AdminWithdrawOrders = () => {
       }
     }
 
-    // If rejected, return funds to withdrawal balance
-    if (status === "rejected") {
-      const { data: profile } = await supabase
-        .from("profiles")
-        .select("withdrawal_balance")
-        .eq("user_id", selectedWithdrawal.user_id)
-        .single();
-
-      if (profile) {
-        await supabase
-          .from("profiles")
-          .update({
-            withdrawal_balance: profile.withdrawal_balance + selectedWithdrawal.amount
-          })
-          .eq("user_id", selectedWithdrawal.user_id);
-      }
-    }
-
-    toast.success(`Status updated to ${status}`);
+    toast.success(`Status updated to ${newStatus}`);
     setSelectedWithdrawal(null);
     fetchWithdrawals();
   };
@@ -160,107 +142,107 @@ const AdminWithdrawOrders = () => {
         <h1 className="text-2xl font-bold">Withdraw Orders</h1>
       </div>
 
-      <div className="space-y-4">
+      <div className="space-y-3">
         {withdrawals.map((withdrawal) => (
-          <Button
+          <div
             key={withdrawal.id}
-            onClick={() => setSelectedWithdrawal(withdrawal)}
-            className="w-full justify-start h-auto p-4"
-            variant="outline"
+            className="bg-card border-2 border-border rounded-xl p-5 shadow-[0_8px_16px_rgba(0,0,0,0.5)] hover:shadow-[0_12px_24px_rgba(0,0,0,0.6)] transition-all duration-300 hover:scale-[1.02]"
+            style={{ 
+              background: 'linear-gradient(135deg, hsl(210, 35%, 20%), hsl(210, 40%, 16%))',
+              boxShadow: '0 8px 16px rgba(0,0,0,0.5), inset 0 1px 2px rgba(255,255,255,0.05)'
+            }}
           >
-            <div className="text-left w-full">
-              <div className="font-semibold">{withdrawal.profiles.mobile_number}</div>
-              <div className="text-sm text-muted-foreground">
-                Amount: ₹{withdrawal.final_amount} | Status: {withdrawal.status}
+            <div 
+              className="cursor-pointer"
+              onClick={() => setSelectedWithdrawal(selectedWithdrawal?.id === withdrawal.id ? null : withdrawal)}
+            >
+              <div className="flex justify-between items-center mb-3">
+                <div className="font-bold text-lg text-primary" style={{ textShadow: '0 2px 4px rgba(0,0,0,0.5)' }}>
+                  {withdrawal.profiles.mobile_number}
+                </div>
+                <div className={`px-4 py-1.5 rounded-full font-bold text-sm ${
+                  withdrawal.status === "Under Review" ? "bg-yellow-500/20 text-yellow-400 border-2 border-yellow-500/50" :
+                  withdrawal.status === "Processing" ? "bg-blue-500/20 text-blue-400 border-2 border-blue-500/50" :
+                  withdrawal.status === "Success" ? "bg-green-500/20 text-green-400 border-2 border-green-500/50" :
+                  "bg-red-500/20 text-red-400 border-2 border-red-500/50"
+                }`} style={{ textShadow: '0 1px 2px rgba(0,0,0,0.5)' }}>
+                  {withdrawal.status}
+                </div>
+              </div>
+              <div className="text-foreground font-semibold text-xl mb-2">
+                ₹{withdrawal.final_amount.toFixed(2)}
               </div>
               <div className="text-xs text-muted-foreground">
                 {new Date(withdrawal.created_at).toLocaleString()}
               </div>
             </div>
-          </Button>
+            
+            {selectedWithdrawal?.id === withdrawal.id && (
+              <div className="mt-4 pt-4 border-t-2 border-border/50 flex gap-3">
+                {withdrawal.status === "Under Review" && (
+                  <Button
+                    onClick={() => updateStatus("Processing")}
+                    className="flex-1 bg-gradient-to-r from-yellow-600 to-yellow-500 hover:from-yellow-500 hover:to-yellow-400 text-white font-bold border-2 border-yellow-400/50 shadow-[0_4px_12px_rgba(234,179,8,0.4)] hover:shadow-[0_6px_16px_rgba(234,179,8,0.6)] transition-all duration-300"
+                    style={{ textShadow: '0 2px 4px rgba(0,0,0,0.5)' }}
+                  >
+                    Under Review → Processing
+                  </Button>
+                )}
+                {withdrawal.status === "Processing" && (
+                  <Button
+                    onClick={() => updateStatus("Success")}
+                    className="flex-1 bg-gradient-to-r from-green-600 to-green-500 hover:from-green-500 hover:to-green-400 text-white font-bold border-2 border-green-400/50 shadow-[0_4px_12px_rgba(34,197,94,0.4)] hover:shadow-[0_6px_16px_rgba(34,197,94,0.6)] transition-all duration-300"
+                    style={{ textShadow: '0 2px 4px rgba(0,0,0,0.5)' }}
+                  >
+                    Processing → Success
+                  </Button>
+                )}
+                <Button
+                  onClick={() => setShowBankDetails(true)}
+                  variant="outline"
+                  className="flex-1 border-2 border-primary/50 bg-primary/10 hover:bg-primary/20 text-primary font-bold shadow-[0_4px_12px_rgba(43,100,62,0.3)] transition-all duration-300"
+                  style={{ textShadow: '0 1px 2px rgba(0,0,0,0.5)' }}
+                >
+                  Bank Details
+                </Button>
+              </div>
+            )}
+          </div>
         ))}
       </div>
 
-      <Dialog open={!!selectedWithdrawal && !showBankDetails} onOpenChange={() => setSelectedWithdrawal(null)}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Withdrawal Details</DialogTitle>
-          </DialogHeader>
-          {selectedWithdrawal && (
-            <div className="space-y-4">
-              <div>
-                <div className="text-sm font-medium">User</div>
-                <div>{selectedWithdrawal.profiles.mobile_number}</div>
-              </div>
-              <div>
-                <div className="text-sm font-medium">Amount</div>
-                <div>₹{selectedWithdrawal.final_amount}</div>
-              </div>
-              <div>
-                <div className="text-sm font-medium">Status</div>
-                <div>{selectedWithdrawal.status}</div>
-              </div>
-              <div className="flex gap-2 mb-2">
-                <Button
-                  onClick={() => updateStatus("processing")}
-                  variant="outline"
-                  className="flex-1 bg-yellow-500/10 hover:bg-yellow-500/20 text-yellow-600"
-                >
-                  Processing
-                </Button>
-                <Button
-                  onClick={() => updateStatus("completed")}
-                  variant="outline"
-                  className="flex-1 bg-green-500/10 hover:bg-green-500/20 text-green-600"
-                >
-                  Success
-                </Button>
-                <Button
-                  onClick={() => updateStatus("rejected")}
-                  variant="outline"
-                  className="flex-1 bg-red-500/10 hover:bg-red-500/20 text-red-600"
-                >
-                  Reject
-                </Button>
-              </div>
-              <Button 
-                onClick={() => setShowBankDetails(true)} 
-                variant="secondary" 
-                className="w-full"
-              >
-                Bank Details
-              </Button>
-            </div>
-          )}
-        </DialogContent>
-      </Dialog>
 
       <Dialog open={showBankDetails} onOpenChange={() => setShowBankDetails(false)}>
-        <DialogContent>
+        <DialogContent className="border-2 border-border" style={{ 
+          background: 'linear-gradient(135deg, hsl(210, 35%, 20%), hsl(210, 40%, 16%))',
+          boxShadow: '0 12px 32px rgba(0,0,0,0.7)'
+        }}>
           <DialogHeader>
-            <DialogTitle>Bank Card Details</DialogTitle>
+            <DialogTitle className="text-2xl font-bold text-primary" style={{ textShadow: '0 2px 4px rgba(0,0,0,0.5)' }}>
+              Bank Card Details
+            </DialogTitle>
           </DialogHeader>
           {selectedWithdrawal?.bank_cards && selectedWithdrawal.bank_cards.length > 0 ? (
-            <div className="space-y-2">
-              <div>
-                <div className="text-sm font-medium">Bank Name</div>
-                <div>{selectedWithdrawal.bank_cards[0].bank_name}</div>
+            <div className="space-y-4">
+              <div className="bg-background/50 p-4 rounded-lg border-2 border-border/50">
+                <div className="text-sm font-medium text-muted-foreground mb-1">Bank Name</div>
+                <div className="text-lg font-bold text-foreground">{selectedWithdrawal.bank_cards[0].bank_name}</div>
               </div>
-              <div>
-                <div className="text-sm font-medium">Account Number</div>
-                <div>{selectedWithdrawal.bank_cards[0].account_number}</div>
+              <div className="bg-background/50 p-4 rounded-lg border-2 border-border/50">
+                <div className="text-sm font-medium text-muted-foreground mb-1">Account Number</div>
+                <div className="text-lg font-bold text-foreground">{selectedWithdrawal.bank_cards[0].account_number}</div>
               </div>
-              <div>
-                <div className="text-sm font-medium">Card Holder Name</div>
-                <div>{selectedWithdrawal.bank_cards[0].card_holder_name}</div>
+              <div className="bg-background/50 p-4 rounded-lg border-2 border-border/50">
+                <div className="text-sm font-medium text-muted-foreground mb-1">Card Holder Name</div>
+                <div className="text-lg font-bold text-foreground">{selectedWithdrawal.bank_cards[0].card_holder_name}</div>
               </div>
-              <div>
-                <div className="text-sm font-medium">IFSC Code</div>
-                <div>{selectedWithdrawal.bank_cards[0].ifsc_code}</div>
+              <div className="bg-background/50 p-4 rounded-lg border-2 border-border/50">
+                <div className="text-sm font-medium text-muted-foreground mb-1">IFSC Code</div>
+                <div className="text-lg font-bold text-foreground">{selectedWithdrawal.bank_cards[0].ifsc_code}</div>
               </div>
             </div>
           ) : (
-            <div>No bank details available</div>
+            <div className="text-center text-muted-foreground font-medium">No bank details available</div>
           )}
         </DialogContent>
       </Dialog>

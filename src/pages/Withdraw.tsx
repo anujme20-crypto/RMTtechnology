@@ -76,25 +76,32 @@ const Withdraw = () => {
       return;
     }
 
-    const taxAmount = withdrawAmount * 0.05;
-    const finalAmount = withdrawAmount - taxAmount;
-
+    // Check if user already withdrew today
+    const today = new Date().toISOString().split('T')[0];
     const { data: { session } } = await supabase.auth.getSession();
     if (!session) return;
 
-    await supabase
-      .from("profiles")
-      .update({
-        withdrawal_balance: profile.withdrawal_balance - withdrawAmount,
-        spin_chances: profile.spin_chances + 1
-      })
-      .eq("user_id", session.user.id);
+    const { data: existingWithdraw } = await supabase
+      .from("withdrawal_requests")
+      .select("*")
+      .eq("user_id", session.user.id)
+      .gte("created_at", `${today}T00:00:00`)
+      .lte("created_at", `${today}T23:59:59`);
+
+    if (existingWithdraw && existingWithdraw.length > 0) {
+      toast.error("You can withdraw only once per day!");
+      return;
+    }
+
+    const taxAmount = withdrawAmount * 0.05;
+    const finalAmount = withdrawAmount - taxAmount;
 
     await supabase.from("withdrawal_requests").insert({
       user_id: session.user.id,
       amount: withdrawAmount,
       final_amount: finalAmount,
       tax_amount: taxAmount,
+      status: "Under Review",
     });
 
     await supabase.from("transactions").insert({
@@ -106,7 +113,7 @@ const Withdraw = () => {
       description: "Withdrawal request",
     });
 
-    toast.success("Withdrawal success");
+    toast.success("Withdrawal request submitted successfully!");
     navigate("/");
   };
 
