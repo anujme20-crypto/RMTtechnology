@@ -7,6 +7,7 @@ import { ArrowLeft } from "lucide-react";
 const Reward = () => {
   const navigate = useNavigate();
   const [rewards, setRewards] = useState<any[]>([]);
+  const [withdrawBalance, setWithdrawBalance] = useState<number>(0);
 
   useEffect(() => {
     loadRewards();
@@ -16,6 +17,7 @@ const Reward = () => {
     const { data: { session } } = await supabase.auth.getSession();
     if (!session) return;
 
+    // Fetch rewards
     const { data } = await supabase
       .from("transactions")
       .select("*")
@@ -24,6 +26,15 @@ const Reward = () => {
       .order("created_at", { ascending: false });
 
     if (data) setRewards(data);
+
+    // Fetch current withdrawal balance
+    const { data: profile } = await supabase
+      .from("profiles")
+      .select("withdrawal_balance")
+      .eq("user_id", session.user.id)
+      .single();
+
+    if (profile) setWithdrawBalance(profile.withdrawal_balance || 0);
   };
 
   return (
@@ -40,12 +51,12 @@ const Reward = () => {
           <div key={reward.id} className="bg-[hsl(var(--navy-medium))] rounded-lg p-4">
             <div className="flex justify-between items-start mb-2">
               <div>
-                <p className="text-foreground font-semibold">{reward.description || "Register Rewards"}</p>
+                <p className="text-foreground font-semibold">System Reward</p>
                 <p className="text-xs text-muted-foreground">{new Date(reward.created_at).toLocaleString()}</p>
               </div>
               <span className="text-success font-bold text-lg">+ ₹{reward.amount.toFixed(2)}</span>
             </div>
-            <p className="text-xs text-muted-foreground capitalize">{reward.balance_type} Balance</p>
+            <p className="text-xs text-muted-foreground">Withdraw Balance: ₹{withdrawBalance.toFixed(2)}</p>
           </div>
         ))}
         {rewards.length === 0 && (

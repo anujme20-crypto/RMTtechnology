@@ -83,7 +83,7 @@ const AdminSystemBonus = () => {
         transaction_type: "reward",
         amount: amount,
         balance_type: "withdrawal",
-        description: "System bonus from admin",
+        description: "System Reward",
       });
 
       toast.success(`₹${amount} bonus given successfully`);

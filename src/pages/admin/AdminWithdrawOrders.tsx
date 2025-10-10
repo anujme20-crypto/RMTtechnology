@@ -92,7 +92,7 @@ const AdminWithdrawOrders = () => {
       return;
     }
 
-    // If completed, deduct from withdrawal balance
+    // If completed, deduct from withdrawal balance and create transaction record
     if (status === "completed") {
       const { data: profile } = await supabase
         .from("profiles")
@@ -107,6 +107,16 @@ const AdminWithdrawOrders = () => {
             withdrawal_balance: profile.withdrawal_balance - selectedWithdrawal.amount
           })
           .eq("user_id", selectedWithdrawal.user_id);
+
+        // Create transaction record for approved withdrawal
+        await supabase.from("transactions").insert({
+          user_id: selectedWithdrawal.user_id,
+          transaction_type: "withdrawal",
+          amount: -selectedWithdrawal.amount,
+          balance_type: "withdrawal",
+          description: "Withdraw approved by admin",
+          status: "completed"
+        });
       }
     }
 
