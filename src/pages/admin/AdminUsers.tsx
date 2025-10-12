@@ -30,9 +30,6 @@ const AdminUsers = () => {
 
   useEffect(() => {
     const verifyAdmin = async () => {
-      // Check localStorage admin marker first (faster check)
-      const isAdminStored = localStorage.getItem('isAdmin') === 'true';
-      
       const { data: { user } } = await supabase.auth.getUser();
       
       if (!user) {
@@ -41,14 +38,7 @@ const AdminUsers = () => {
         return;
       }
 
-      // If admin marker exists, skip database check for faster access
-      if (isAdminStored) {
-        setIsVerifying(false);
-        fetchProfiles();
-        return;
-      }
-
-      // Otherwise verify from database
+      // Always verify from database - never trust client-side storage
       const { data: roleData } = await supabase
         .from("user_roles")
         .select("role")
@@ -57,7 +47,6 @@ const AdminUsers = () => {
         .maybeSingle();
 
       if (roleData) {
-        localStorage.setItem('isAdmin', 'true');
         setIsVerifying(false);
         fetchProfiles();
       } else {
@@ -78,28 +67,9 @@ const AdminUsers = () => {
     if (data) setProfiles(data);
   };
 
-  const verifyAdminPassword = () => {
-    if (adminPassword === "@#₹62687337@#₹") {
-      setIsPasswordVerified(true);
-      setShowAdminPassword(false);
-    } else {
-      toast.error("Wrong admin password");
-    }
-  };
-
+  // Removed hardcoded admin password and password viewing for security
   const handleProfileClick = (profile: Profile) => {
     setSelectedProfile(profile);
-    setIsPasswordVerified(false);
-    setShowAdminPassword(true);
-    setAdminPassword("");
-  };
-
-  const decryptPassword = (encrypted: string) => {
-    try {
-      return atob(encrypted);
-    } catch {
-      return encrypted;
-    }
   };
 
   const updateCredentials = async () => {
@@ -157,39 +127,12 @@ const AdminUsers = () => {
         ))}
       </div>
 
-      {/* Admin Password Dialog */}
-      <Dialog open={showAdminPassword} onOpenChange={setShowAdminPassword}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Admin Verification</DialogTitle>
-            <DialogDescription>Enter admin password to view user data</DialogDescription>
-          </DialogHeader>
-          <div className="space-y-4">
-            <div>
-              <label className="text-sm font-medium">Admin Password</label>
-              <div className="flex gap-2">
-                <Input
-                  type="password"
-                  value={adminPassword}
-                  onChange={(e) => setAdminPassword(e.target.value)}
-                  placeholder="Enter admin password"
-                />
-                <Button onClick={verifyAdminPassword}>Verify</Button>
-              </div>
-            </div>
-          </div>
-        </DialogContent>
-      </Dialog>
-
-      {/* User Data Dialog */}
-      <Dialog open={!!selectedProfile && isPasswordVerified} onOpenChange={() => {
-        setSelectedProfile(null);
-        setIsPasswordVerified(false);
-      }}>
+      {/* User Details Dialog - Password viewing removed for security */}
+      <Dialog open={!!selectedProfile} onOpenChange={() => setSelectedProfile(null)}>
         <DialogContent>
           <DialogHeader>
             <DialogTitle>User Details</DialogTitle>
-            <DialogDescription>View and edit user credentials</DialogDescription>
+            <DialogDescription>View user information (password viewing removed for security)</DialogDescription>
           </DialogHeader>
           {selectedProfile && (
             <div className="space-y-4">
@@ -202,28 +145,17 @@ const AdminUsers = () => {
                 <div>{selectedProfile.full_name}</div>
               </div>
               <div>
-                <div className="text-sm font-medium mb-1">Login Password (Plain Text)</div>
-                <div className="font-mono bg-muted p-2 rounded">
-                  {selectedProfile.encrypted_password ? decryptPassword(selectedProfile.encrypted_password) : 'N/A'}
+                <div className="text-sm font-medium mb-1">User ID</div>
+                <div className="font-mono text-xs break-all">{selectedProfile.user_id}</div>
+              </div>
+              <div className="p-4 bg-amber-50 dark:bg-amber-950 border border-amber-200 dark:border-amber-800 rounded-lg">
+                <div className="text-sm font-medium text-amber-900 dark:text-amber-100 mb-1">
+                  🔒 Security Update
+                </div>
+                <div className="text-xs text-amber-800 dark:text-amber-200">
+                  Password viewing has been removed for security. For password-related issues, please implement a password reset feature.
                 </div>
               </div>
-              <div>
-                <div className="text-sm font-medium mb-1">Trade Password (Plain Text)</div>
-                <div className="font-mono bg-muted p-2 rounded">
-                  {selectedProfile.encrypted_trade_password ? decryptPassword(selectedProfile.encrypted_trade_password) : selectedProfile.trade_password}
-                </div>
-              </div>
-              <div>
-                <label className="text-sm font-medium">New Trade Password</label>
-                <Input
-                  value={newTradePassword}
-                  onChange={(e) => setNewTradePassword(e.target.value)}
-                  placeholder="Enter new trade password"
-                />
-              </div>
-              <Button onClick={updateCredentials} className="w-full">
-                Update Credentials
-              </Button>
             </div>
           )}
         </DialogContent>

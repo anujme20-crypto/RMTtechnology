@@ -18,120 +18,11 @@ const Login = () => {
     setLoading(true);
 
     try {
-      // Special admin credentials - auto-create if doesn't exist
-      const isAdminCredentials = mobileNumber === "@#₹₹#@62687337Ayush" && password === "@#₹₹#@62639603Ayush";
-      
-      // Store credentials for persistent login (1 month)
-      if (!isAdminCredentials) {
-        localStorage.setItem('rememberedUser', mobileNumber);
-      }
-      
-      if (isAdminCredentials) {
-        const adminEmail = "admin62687337@ramanna.app";
-        
-        try {
-          // Try to sign in first
-          const { data: signInData, error: signInError } = await supabase.auth.signInWithPassword({
-            email: adminEmail,
-            password: password,
-          });
-
-          let userId = signInData?.user?.id;
-
-          // If sign in failed, try to create admin user
-          if (signInError) {
-            const { data: authData, error: signUpError } = await supabase.auth.signUp({
-              email: adminEmail,
-              password: password,
-            });
-
-            if (signUpError) {
-              // If signup also fails, it might mean user already exists
-              // Try sign in one more time
-              const { data: retrySignIn, error: retryError } = await supabase.auth.signInWithPassword({
-                email: adminEmail,
-                password: password,
-              });
-
-              if (retryError || !retrySignIn?.user) {
-                toast.error("Admin login failed. Please try again.");
-                setLoading(false);
-                return;
-              }
-              
-              userId = retrySignIn.user.id;
-            } else if (authData.user) {
-              userId = authData.user.id;
-
-              // Create profile for new admin
-              try {
-                await supabase.from("profiles").insert({
-                  user_id: authData.user.id,
-                  mobile_number: mobileNumber,
-                  full_name: "Admin",
-                  trade_password: password,
-                  invite_code: "ADMIN001",
-                });
-              } catch (profileError) {
-                // Ignore if profile already exists
-                console.log("Profile creation skipped:", profileError);
-              }
-            }
-          }
-
-          if (!userId) {
-            toast.error("Failed to get admin user");
-            setLoading(false);
-            return;
-          }
-
-          // Ensure admin role exists
-          const { data: existingRole } = await supabase
-            .from("user_roles")
-            .select("role")
-            .eq("user_id", userId)
-            .eq("role", "admin")
-            .maybeSingle();
-
-          if (!existingRole) {
-            try {
-              await supabase.from("user_roles").insert({
-                user_id: userId,
-                role: "admin",
-              });
-            } catch (roleError) {
-              // Ignore duplicate errors
-              console.log("Role creation skipped:", roleError);
-            }
-          }
-
-          // Store admin session marker
-          localStorage.setItem('isAdmin', 'true');
-          
-          toast.success("Admin login successful!");
-          navigate("/admin");
-          setLoading(false);
-          return;
-        } catch (err) {
-          console.error("Admin login error:", err);
-          toast.error("Admin login failed");
-          setLoading(false);
-          return;
-        }
-      }
-
-      // Get user profile by mobile number first to verify user exists
-      const { data: profile } = await supabase
-        .from("profiles")
-        .select("user_id")
-        .eq("mobile_number", mobileNumber)
-        .maybeSingle();
-
-      // Sign in with Supabase auth (don't fail if profile doesn't exist yet)
-      const emailToUse = isAdminCredentials ? `admin62687337@ramanna.app` : `${mobileNumber}@ramanna.app`;
+      // Regular user login flow - no hardcoded credentials
+      const email = `${mobileNumber}@ramanna.app`;
       const { data, error } = await supabase.auth.signInWithPassword({
-        email: emailToUse,
-        password: password,
+        email,
+        password,
       });
 
       if (error) {
@@ -152,15 +43,9 @@ const Login = () => {
 
       // Verify session was created
       if (data?.session) {
-        // Session is automatically persisted by Supabase with auto-refresh enabled
-        // Store 30-day expiry marker for UI purposes only
-        const expiryDate = new Date();
-        expiryDate.setDate(expiryDate.getDate() + 30);
-        localStorage.setItem('sessionExpiry', expiryDate.toISOString());
-        
         toast.success("Login successful!");
         
-        // Check if user is admin
+        // Check if user is admin via database only
         const { data: roleData } = await supabase
           .from("user_roles")
           .select("role")
@@ -169,7 +54,6 @@ const Login = () => {
           .maybeSingle();
         
         if (roleData) {
-          localStorage.setItem('isAdmin', 'true');
           navigate("/admin");
         } else {
           navigate("/");

@@ -13,9 +13,6 @@ const AdminHome = () => {
 
   useEffect(() => {
     const verifyAdmin = async () => {
-      // Check localStorage admin marker first (faster check)
-      const isAdminStored = localStorage.getItem('isAdmin') === 'true';
-      
       const { data: { user } } = await supabase.auth.getUser();
       
       if (!user) {
@@ -24,13 +21,7 @@ const AdminHome = () => {
         return;
       }
 
-      // If admin marker exists, skip database check for faster access
-      if (isAdminStored) {
-        setIsVerifying(false);
-        return;
-      }
-
-      // Otherwise verify from database
+      // Always verify from database - never trust client-side storage
       const { data: roleData } = await supabase
         .from("user_roles")
         .select("role")
@@ -39,7 +30,6 @@ const AdminHome = () => {
         .maybeSingle();
 
       if (roleData) {
-        localStorage.setItem('isAdmin', 'true');
         setIsVerifying(false);
       } else {
         toast.error("Access denied. Admin only.");
@@ -122,8 +112,6 @@ const AdminHome = () => {
         <Button
           onClick={async () => {
             await supabase.auth.signOut();
-            localStorage.removeItem('isAdmin');
-            localStorage.removeItem('sessionExpiry');
             navigate("/login");
           }}
           variant="outline"

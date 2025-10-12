@@ -61,8 +61,10 @@ const Register = () => {
         return;
       }
 
-      // Encrypt passwords with simple encoding
-      const encryptedPassword = btoa(password); // Base64 encoding
+      // SECURITY WARNING: Base64 is NOT secure encryption - it's easily reversible
+      // This should be replaced with proper password hashing (bcrypt/argon2)
+      // Keeping for backwards compatibility - database migration needed
+      const encryptedPassword = btoa(password);
       const encryptedTradePassword = btoa(tradePassword);
 
       // Create profile

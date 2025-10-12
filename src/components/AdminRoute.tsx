@@ -20,16 +20,7 @@ export default function AdminRoute({ children }: AdminRouteProps) {
         return;
       }
 
-      // Check if admin marker exists in localStorage for faster access
-      const isAdminStored = localStorage.getItem('isAdmin') === 'true';
-      
-      if (isAdminStored) {
-        setAllowed(true);
-        setLoading(false);
-        return;
-      }
-
-      // Otherwise verify from database using user_roles table
+      // Verify from database using user_roles table - NEVER trust client-side storage
       const { data: roleData } = await supabase
         .from("user_roles")
         .select("role")
@@ -38,7 +29,6 @@ export default function AdminRoute({ children }: AdminRouteProps) {
         .maybeSingle();
 
       if (roleData) {
-        localStorage.setItem('isAdmin', 'true');
         setAllowed(true);
       } else {
         setAllowed(false);
