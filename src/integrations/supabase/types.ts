@@ -346,6 +346,7 @@ export type Database = {
           created_at: string | null
           final_amount: number
           id: string
+          mobile_number: string | null
           processed_at: string | null
           status: string | null
           tax_amount: number
@@ -356,6 +357,7 @@ export type Database = {
           created_at?: string | null
           final_amount: number
           id?: string
+          mobile_number?: string | null
           processed_at?: string | null
           status?: string | null
           tax_amount: number
@@ -366,6 +368,7 @@ export type Database = {
           created_at?: string | null
           final_amount?: number
           id?: string
+          mobile_number?: string | null
           processed_at?: string | null
           status?: string | null
           tax_amount?: number
