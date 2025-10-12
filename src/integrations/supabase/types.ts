@@ -22,6 +22,7 @@ export type Database = {
           created_at: string | null
           id: string
           ifsc_code: string
+          mobile_number: string | null
           user_id: string
         }
         Insert: {
@@ -31,6 +32,7 @@ export type Database = {
           created_at?: string | null
           id?: string
           ifsc_code: string
+          mobile_number?: string | null
           user_id: string
         }
         Update: {
@@ -40,6 +42,7 @@ export type Database = {
           created_at?: string | null
           id?: string
           ifsc_code?: string
+          mobile_number?: string | null
           user_id?: string
         }
         Relationships: []
@@ -49,6 +52,7 @@ export type Database = {
           created_at: string | null
           id: string
           image_url: string
+          mobile_number: string | null
           reward_amount: number
           user_id: string
         }
@@ -56,6 +60,7 @@ export type Database = {
           created_at?: string | null
           id?: string
           image_url: string
+          mobile_number?: string | null
           reward_amount: number
           user_id: string
         }
@@ -63,6 +68,7 @@ export type Database = {
           created_at?: string | null
           id?: string
           image_url?: string
+          mobile_number?: string | null
           reward_amount?: number
           user_id?: string
         }
@@ -72,18 +78,21 @@ export type Database = {
         Row: {
           created_at: string | null
           id: string
+          mobile_number: string | null
           reward_amount: number | null
           user_id: string
         }
         Insert: {
           created_at?: string | null
           id?: string
+          mobile_number?: string | null
           reward_amount?: number | null
           user_id: string
         }
         Update: {
           created_at?: string | null
           id?: string
+          mobile_number?: string | null
           reward_amount?: number | null
           user_id?: string
         }
@@ -196,6 +205,7 @@ export type Database = {
           amount: number
           created_at: string | null
           id: string
+          mobile_number: string | null
           status: string | null
           upi_id: string
           user_id: string
@@ -205,6 +215,7 @@ export type Database = {
           amount: number
           created_at?: string | null
           id?: string
+          mobile_number?: string | null
           status?: string | null
           upi_id: string
           user_id: string
@@ -214,6 +225,7 @@ export type Database = {
           amount?: number
           created_at?: string | null
           id?: string
+          mobile_number?: string | null
           status?: string | null
           upi_id?: string
           user_id?: string
@@ -226,6 +238,7 @@ export type Database = {
           created_at: string | null
           id: string
           message: string
+          mobile_number: string | null
           sender_type: string
           user_id: string
         }
@@ -233,6 +246,7 @@ export type Database = {
           created_at?: string | null
           id?: string
           message: string
+          mobile_number?: string | null
           sender_type: string
           user_id: string
         }
@@ -240,6 +254,7 @@ export type Database = {
           created_at?: string | null
           id?: string
           message?: string
+          mobile_number?: string | null
           sender_type?: string
           user_id?: string
         }
@@ -252,6 +267,7 @@ export type Database = {
           created_at: string | null
           description: string | null
           id: string
+          mobile_number: string | null
           status: string | null
           transaction_type: string
           user_id: string
@@ -263,6 +279,7 @@ export type Database = {
           created_at?: string | null
           description?: string | null
           id?: string
+          mobile_number?: string | null
           status?: string | null
           transaction_type: string
           user_id: string
@@ -274,6 +291,7 @@ export type Database = {
           created_at?: string | null
           description?: string | null
           id?: string
+          mobile_number?: string | null
           status?: string | null
           transaction_type?: string
           user_id?: string
@@ -288,6 +306,7 @@ export type Database = {
           expiry_date: string
           id: string
           is_active: boolean | null
+          mobile_number: string | null
           product_id: string
           purchase_date: string | null
           user_id: string
@@ -298,6 +317,7 @@ export type Database = {
           expiry_date: string
           id?: string
           is_active?: boolean | null
+          mobile_number?: string | null
           product_id: string
           purchase_date?: string | null
           user_id: string
@@ -308,6 +328,7 @@ export type Database = {
           expiry_date?: string
           id?: string
           is_active?: boolean | null
+          mobile_number?: string | null
           product_id?: string
           purchase_date?: string | null
           user_id?: string
