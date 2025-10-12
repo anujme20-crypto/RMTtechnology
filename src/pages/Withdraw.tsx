@@ -96,6 +96,14 @@ const Withdraw = () => {
     const taxAmount = withdrawAmount * 0.05;
     const finalAmount = withdrawAmount - taxAmount;
 
+    // Deduct from withdrawal balance
+    await supabase
+      .from("profiles")
+      .update({ 
+        withdrawal_balance: profile.withdrawal_balance - withdrawAmount 
+      })
+      .eq("user_id", session.user.id);
+
     await supabase.from("withdrawal_requests").insert({
       user_id: session.user.id,
       amount: withdrawAmount,

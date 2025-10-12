@@ -57,6 +57,12 @@ export default {
           border: "hsl(var(--sidebar-border))",
           ring: "hsl(var(--sidebar-ring))",
         },
+        charcoal: "hsl(var(--charcoal))",
+        bronze: "hsl(var(--bronze))",
+        copper: "hsl(var(--copper))",
+        gunmetal: "hsl(var(--gunmetal))",
+        "electric-blue": "hsl(var(--electric-blue))",
+        "bright-orange": "hsl(var(--bright-orange))",
       },
       borderRadius: {
         lg: "var(--radius)",
