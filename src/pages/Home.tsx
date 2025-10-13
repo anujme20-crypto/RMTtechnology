@@ -12,6 +12,7 @@ const Home = () => {
   const [profile, setProfile] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [showTelegramPopup, setShowTelegramPopup] = useState(false);
+  const [teamStats, setTeamStats] = useState({ level1: 0, level1Active: 0, level2: 0, level2Active: 0 });
 
   useEffect(() => {
     checkAuth();
@@ -34,8 +35,57 @@ const Home = () => {
 
     if (data) {
       setProfile(data);
+      await loadTeamStats(data.invite_code);
     }
     setLoading(false);
+  };
+
+  const loadTeamStats = async (inviteCode: string) => {
+    // Get level 1 referrals (direct referrals)
+    const { data: level1 } = await supabase
+      .from("profiles")
+      .select("user_id, invite_code")
+      .eq("invited_by", inviteCode);
+
+    const level1Count = level1?.length || 0;
+
+    // Get active users for level 1 (those who purchased)
+    let level1Active = 0;
+    if (level1 && level1.length > 0) {
+      const { data: activeUsers } = await supabase
+        .from("user_products")
+        .select("user_id")
+        .in("user_id", level1.map(u => u.user_id))
+        .eq("is_active", true);
+      
+      level1Active = new Set(activeUsers?.map(u => u.user_id)).size;
+    }
+
+    // Get level 2 referrals (referrals of referrals)
+    let level2Count = 0;
+    let level2Active = 0;
+    if (level1 && level1.length > 0) {
+      const level1Codes = level1.map(u => u.invite_code);
+      const { data: level2 } = await supabase
+        .from("profiles")
+        .select("user_id")
+        .in("invited_by", level1Codes);
+
+      level2Count = level2?.length || 0;
+
+      // Get active users for level 2
+      if (level2 && level2.length > 0) {
+        const { data: activeUsers } = await supabase
+          .from("user_products")
+          .select("user_id")
+          .in("user_id", level2.map(u => u.user_id))
+          .eq("is_active", true);
+        
+        level2Active = new Set(activeUsers?.map(u => u.user_id)).size;
+      }
+    }
+
+    setTeamStats({ level1: level1Count, level1Active, level2: level2Count, level2Active });
   };
 
   const handleCheckin = async () => {
@@ -179,8 +229,8 @@ const Home = () => {
             <p className="text-xs text-muted-foreground">35%</p>
             <p className="text-xs text-foreground">Lv 1 Rebate</p>
             <div className="mt-1">
-              <p className="text-xs text-muted-foreground">7 Total invite</p>
-              <p className="text-xs text-muted-foreground">0 Active</p>
+              <p className="text-xs text-muted-foreground">{teamStats.level1} Total invite</p>
+              <p className="text-xs text-muted-foreground">{teamStats.level1Active} Active</p>
             </div>
           </div>
           <div className="bg-[hsl(var(--navy-light))] rounded-lg p-2 text-center">
@@ -188,8 +238,8 @@ const Home = () => {
             <p className="text-xs text-muted-foreground">2%</p>
             <p className="text-xs text-foreground">Lv 2 Rebate</p>
             <div className="mt-1">
-              <p className="text-xs text-muted-foreground">2 Total invite</p>
-              <p className="text-xs text-muted-foreground">0 Active</p>
+              <p className="text-xs text-muted-foreground">{teamStats.level2} Total invite</p>
+              <p className="text-xs text-muted-foreground">{teamStats.level2Active} Active</p>
             </div>
           </div>
           <div className="bg-[hsl(var(--navy-light))] rounded-lg p-2 text-center">
