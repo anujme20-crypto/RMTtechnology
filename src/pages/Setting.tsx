@@ -101,6 +101,12 @@ const Setting = () => {
           />
         </div>
 
+        <div className="bg-amber-500/10 border border-amber-500/20 rounded-lg p-3 mb-4">
+          <p className="text-xs text-amber-200 text-center font-medium">
+            🔒 Only you can see your password and trade password
+          </p>
+        </div>
+
         <div className="space-y-2">
           <Label htmlFor="password" className="text-foreground">Password</Label>
           <Input
