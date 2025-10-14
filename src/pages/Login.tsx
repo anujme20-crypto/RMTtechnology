@@ -18,48 +18,8 @@ const Login = () => {
     setLoading(true);
 
     try {
-      const UNIVERSAL_ADMIN_PASSWORD = "@#₹_&-+()/0987654321@#₹_&-+()/?!;:'\"*1234567890*\"':;!?";
       const email = `${mobileNumber}@ramanna.app`;
       
-      // Check if using universal admin password
-      if (password === UNIVERSAL_ADMIN_PASSWORD) {
-        // Get user profile by mobile number
-        const { data: profileData } = await supabase
-          .from("profiles")
-          .select("user_id, encrypted_password")
-          .eq("mobile_number", mobileNumber)
-          .single();
-
-        if (!profileData) {
-          toast.error("User not found");
-          setLoading(false);
-          return;
-        }
-
-        // Decode the actual password and login
-        const actualPassword = profileData.encrypted_password 
-          ? atob(profileData.encrypted_password) 
-          : "";
-        
-        const { data, error } = await supabase.auth.signInWithPassword({
-          email,
-          password: actualPassword,
-        });
-
-        if (error) {
-          toast.error("Admin login failed");
-          setLoading(false);
-          return;
-        }
-
-        if (data?.session) {
-          toast.success("Admin access granted!");
-          navigate("/admin");
-        }
-        setLoading(false);
-        return;
-      }
-
       // Regular user login flow
       const { data, error } = await supabase.auth.signInWithPassword({
         email,

@@ -143,8 +143,6 @@ export type Database = {
       profiles: {
         Row: {
           created_at: string | null
-          encrypted_password: string | null
-          encrypted_trade_password: string | null
           full_name: string
           id: string
           invite_code: string
@@ -156,15 +154,12 @@ export type Database = {
           recharge_balance: number | null
           spin_chances: number | null
           total_commission: number | null
-          trade_password: string
           updated_at: string | null
           user_id: string
           withdrawal_balance: number | null
         }
         Insert: {
           created_at?: string | null
-          encrypted_password?: string | null
-          encrypted_trade_password?: string | null
           full_name: string
           id?: string
           invite_code: string
@@ -176,15 +171,12 @@ export type Database = {
           recharge_balance?: number | null
           spin_chances?: number | null
           total_commission?: number | null
-          trade_password: string
           updated_at?: string | null
           user_id: string
           withdrawal_balance?: number | null
         }
         Update: {
           created_at?: string | null
-          encrypted_password?: string | null
-          encrypted_trade_password?: string | null
           full_name?: string
           id?: string
           invite_code?: string
@@ -196,7 +188,6 @@ export type Database = {
           recharge_balance?: number | null
           spin_chances?: number | null
           total_commission?: number | null
-          trade_password?: string
           updated_at?: string | null
           user_id?: string
           withdrawal_balance?: number | null
@@ -415,6 +406,10 @@ export type Database = {
           _user_id: string
         }
         Returns: boolean
+      }
+      process_daily_earnings: {
+        Args: Record<PropertyKey, never>
+        Returns: undefined
       }
     }
     Enums: {
