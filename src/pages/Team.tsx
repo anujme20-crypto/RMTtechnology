@@ -8,7 +8,11 @@ import { ArrowLeft, Copy } from "lucide-react";
 const Team = () => {
   const navigate = useNavigate();
   const [profile, setProfile] = useState<any>(null);
-  const [teamStats, setTeamStats] = useState({ level1: 0, level1Active: 0 });
+  const [teamStats, setTeamStats] = useState({ 
+    level1: 0, level1Active: 0,
+    level2: 0, level2Active: 0,
+    level3: 0, level3Active: 0
+  });
 
   useEffect(() => {
     loadData();
@@ -30,27 +34,121 @@ const Team = () => {
     if (profileData) {
       setProfile(profileData);
 
-      // Get level 1 referrals
+      // Get level 1 referrals (direct invites)
       const { data: level1 } = await supabase
         .from("profiles")
-        .select("user_id")
+        .select("user_id, invite_code")
         .eq("invited_by", profileData.invite_code);
 
       const level1Count = level1?.length || 0;
 
-      // Get active users (those who purchased)
+      // Get level 1 active users (those who purchased stable products)
       let level1Active = 0;
       if (level1 && level1.length > 0) {
-        const { data: activeUsers } = await supabase
+        const { data: stableProducts } = await supabase
           .from("user_products")
-          .select("user_id")
+          .select("user_id, product_id")
           .in("user_id", level1.map(u => u.user_id))
           .eq("is_active", true);
         
-        level1Active = new Set(activeUsers?.map(u => u.user_id)).size;
+        if (stableProducts && stableProducts.length > 0) {
+          const { data: products } = await supabase
+            .from("products")
+            .select("id")
+            .eq("product_type", "stable")
+            .in("id", stableProducts.map(p => p.product_id));
+          
+          const stableProductIds = new Set(products?.map(p => p.id));
+          const activeUserIds = stableProducts
+            .filter(sp => stableProductIds.has(sp.product_id))
+            .map(sp => sp.user_id);
+          level1Active = new Set(activeUserIds).size;
+        }
       }
 
-      setTeamStats({ level1: level1Count, level1Active });
+      // Get level 2 referrals (invites of level 1)
+      let level2Count = 0;
+      let level2Active = 0;
+      if (level1 && level1.length > 0) {
+        const level1Codes = level1.map(u => u.invite_code);
+        const { data: level2 } = await supabase
+          .from("profiles")
+          .select("user_id, invite_code")
+          .in("invited_by", level1Codes);
+
+        level2Count = level2?.length || 0;
+
+        // Get level 2 active users
+        if (level2 && level2.length > 0) {
+          const { data: stableProducts } = await supabase
+            .from("user_products")
+            .select("user_id, product_id")
+            .in("user_id", level2.map(u => u.user_id))
+            .eq("is_active", true);
+          
+          if (stableProducts && stableProducts.length > 0) {
+            const { data: products } = await supabase
+              .from("products")
+              .select("id")
+              .eq("product_type", "stable")
+              .in("id", stableProducts.map(p => p.product_id));
+            
+            const stableProductIds = new Set(products?.map(p => p.id));
+            const activeUserIds = stableProducts
+              .filter(sp => stableProductIds.has(sp.product_id))
+              .map(sp => sp.user_id);
+            level2Active = new Set(activeUserIds).size;
+          }
+        }
+
+        // Get level 3 referrals (invites of level 2)
+        let level3Count = 0;
+        let level3Active = 0;
+        if (level2 && level2.length > 0) {
+          const level2Codes = level2.map(u => u.invite_code);
+          const { data: level3 } = await supabase
+            .from("profiles")
+            .select("user_id")
+            .in("invited_by", level2Codes);
+
+          level3Count = level3?.length || 0;
+
+          // Get level 3 active users
+          if (level3 && level3.length > 0) {
+            const { data: stableProducts } = await supabase
+              .from("user_products")
+              .select("user_id, product_id")
+              .in("user_id", level3.map(u => u.user_id))
+              .eq("is_active", true);
+            
+            if (stableProducts && stableProducts.length > 0) {
+              const { data: products } = await supabase
+                .from("products")
+                .select("id")
+                .eq("product_type", "stable")
+                .in("id", stableProducts.map(p => p.product_id));
+              
+              const stableProductIds = new Set(products?.map(p => p.id));
+              const activeUserIds = stableProducts
+                .filter(sp => stableProductIds.has(sp.product_id))
+                .map(sp => sp.user_id);
+              level3Active = new Set(activeUserIds).size;
+            }
+          }
+        }
+
+        setTeamStats({ 
+          level1: level1Count, level1Active,
+          level2: level2Count, level2Active,
+          level3: level3Count, level3Active
+        });
+      } else {
+        setTeamStats({ 
+          level1: level1Count, level1Active,
+          level2: 0, level2Active: 0,
+          level3: 0, level3Active: 0
+        });
+      }
     }
   };
 
@@ -121,11 +219,11 @@ const Team = () => {
             </div>
             <div>
               <p className="text-xs text-muted-foreground mb-1">Total Invite</p>
-              <p className="font-semibold">0</p>
+              <p className="font-semibold">{teamStats.level2}</p>
             </div>
             <div>
               <p className="text-xs text-muted-foreground mb-1">Active</p>
-              <p className="font-semibold">0</p>
+              <p className="font-semibold">{teamStats.level2Active}</p>
             </div>
           </div>
         </div>
@@ -142,11 +240,11 @@ const Team = () => {
             </div>
             <div>
               <p className="text-xs text-muted-foreground mb-1">Total Invite</p>
-              <p className="font-semibold">0</p>
+              <p className="font-semibold">{teamStats.level3}</p>
             </div>
             <div>
               <p className="text-xs text-muted-foreground mb-1">Active</p>
-              <p className="font-semibold">0</p>
+              <p className="font-semibold">{teamStats.level3Active}</p>
             </div>
           </div>
         </div>

@@ -107,6 +107,7 @@ export type Database = {
           maximum_purchase: number
           name: string
           price: number
+          product_type: string
           revenue_days: number
           total_revenue: number
           vip_level: number
@@ -119,6 +120,7 @@ export type Database = {
           maximum_purchase: number
           name: string
           price: number
+          product_type?: string
           revenue_days: number
           total_revenue: number
           vip_level: number
@@ -131,6 +133,7 @@ export type Database = {
           maximum_purchase?: number
           name?: string
           price?: number
+          product_type?: string
           revenue_days?: number
           total_revenue?: number
           vip_level?: number

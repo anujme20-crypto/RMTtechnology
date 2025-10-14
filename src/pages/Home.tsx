@@ -41,7 +41,7 @@ const Home = () => {
   };
 
   const loadTeamStats = async (inviteCode: string) => {
-    // Get level 1 referrals (direct referrals)
+    // Get level 1 referrals (direct invites)
     const { data: level1 } = await supabase
       .from("profiles")
       .select("user_id, invite_code")
@@ -49,19 +49,31 @@ const Home = () => {
 
     const level1Count = level1?.length || 0;
 
-    // Get active users for level 1 (those who purchased)
+    // Get level 1 active users (those who purchased stable products)
     let level1Active = 0;
     if (level1 && level1.length > 0) {
-      const { data: activeUsers } = await supabase
+      const { data: stableProducts } = await supabase
         .from("user_products")
-        .select("user_id")
+        .select("user_id, product_id")
         .in("user_id", level1.map(u => u.user_id))
         .eq("is_active", true);
       
-      level1Active = new Set(activeUsers?.map(u => u.user_id)).size;
+      if (stableProducts && stableProducts.length > 0) {
+        const { data: products } = await supabase
+          .from("products")
+          .select("id")
+          .eq("product_type", "stable")
+          .in("id", stableProducts.map(p => p.product_id));
+        
+        const stableProductIds = new Set(products?.map(p => p.id));
+        const activeUserIds = stableProducts
+          .filter(sp => stableProductIds.has(sp.product_id))
+          .map(sp => sp.user_id);
+        level1Active = new Set(activeUserIds).size;
+      }
     }
 
-    // Get level 2 referrals (referrals of referrals)
+    // Get level 2 referrals (invites of level 1)
     let level2Count = 0;
     let level2Active = 0;
     if (level1 && level1.length > 0) {
@@ -73,15 +85,27 @@ const Home = () => {
 
       level2Count = level2?.length || 0;
 
-      // Get active users for level 2
+      // Get level 2 active users (those who purchased stable products)
       if (level2 && level2.length > 0) {
-        const { data: activeUsers } = await supabase
+        const { data: stableProducts } = await supabase
           .from("user_products")
-          .select("user_id")
+          .select("user_id, product_id")
           .in("user_id", level2.map(u => u.user_id))
           .eq("is_active", true);
         
-        level2Active = new Set(activeUsers?.map(u => u.user_id)).size;
+        if (stableProducts && stableProducts.length > 0) {
+          const { data: products } = await supabase
+            .from("products")
+            .select("id")
+            .eq("product_type", "stable")
+            .in("id", stableProducts.map(p => p.product_id));
+          
+          const stableProductIds = new Set(products?.map(p => p.id));
+          const activeUserIds = stableProducts
+            .filter(sp => stableProductIds.has(sp.product_id))
+            .map(sp => sp.user_id);
+          level2Active = new Set(activeUserIds).size;
+        }
       }
     }
 
