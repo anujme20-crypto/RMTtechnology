@@ -43,7 +43,6 @@ const Team = () => {
       if (level1Error) {
         console.error("Error fetching level 1:", level1Error);
       }
-      console.log("Level 1 referrals:", level1);
 
       const level1Count = level1?.length || 0;
 

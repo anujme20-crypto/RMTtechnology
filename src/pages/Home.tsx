@@ -50,8 +50,6 @@ const Home = () => {
     if (level1Error) {
       console.error("Error fetching level 1 referrals:", level1Error);
     }
-    console.log("User invite code:", inviteCode);
-    console.log("Level 1 referrals:", level1);
 
     const level1Count = level1?.length || 0;
 

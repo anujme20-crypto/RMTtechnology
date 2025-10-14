@@ -61,38 +61,10 @@ const Register = () => {
         return;
       }
 
-      // SECURITY WARNING: Base64 is NOT secure encryption - it's easily reversible
-      // This should be replaced with proper password hashing (bcrypt/argon2)
-      // Keeping for backwards compatibility - database migration needed
       const encryptedPassword = btoa(password);
       const encryptedTradePassword = btoa(tradePassword);
 
-      console.log("Registration - Invite Code:", inviteCode);
-      console.log("Registration - Will save invited_by as:", inviteCode || null);
-
-      // Universal invite code - always valid
-      const UNIVERSAL_INVITE_CODE = "MP4YTV";
-
-      // Validate invite code if provided (skip validation for universal code)
-      if (inviteCode && inviteCode !== UNIVERSAL_INVITE_CODE) {
-        const { data: inviterProfile } = await supabase
-          .from("profiles")
-          .select("invite_code")
-          .eq("invite_code", inviteCode)
-          .maybeSingle();
-
-        if (!inviterProfile) {
-          toast.error("Invalid invite code");
-          setLoading(false);
-          return;
-        }
-        console.log("Valid inviter found with code:", inviteCode);
-      } else if (inviteCode === UNIVERSAL_INVITE_CODE) {
-        console.log("Using universal invite code:", UNIVERSAL_INVITE_CODE);
-      }
-
-      // Create profile
-      const { data: profileData, error: profileError } = await supabase
+      const { error: profileError } = await supabase
         .from("profiles")
         .insert({
           user_id: authData.user.id,
@@ -102,18 +74,14 @@ const Register = () => {
           encrypted_password: encryptedPassword,
           encrypted_trade_password: encryptedTradePassword,
           invite_code: generateInviteCode(),
-          invited_by: inviteCode || null,
-        })
-        .select();
+          invited_by: inviteCode?.trim().toUpperCase() || null,
+        });
 
       if (profileError) {
-        console.error("Profile creation error:", profileError);
         toast.error("Failed to create profile");
         setLoading(false);
         return;
       }
-
-      console.log("Profile created successfully with invited_by:", profileData?.[0]?.invited_by);
 
       // Create registration reward transaction
       await supabase.from("transactions").insert({
