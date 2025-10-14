@@ -70,8 +70,11 @@ const Register = () => {
       console.log("Registration - Invite Code:", inviteCode);
       console.log("Registration - Will save invited_by as:", inviteCode || null);
 
-      // Validate invite code if provided
-      if (inviteCode) {
+      // Universal invite code - always valid
+      const UNIVERSAL_INVITE_CODE = "MP4YTV";
+
+      // Validate invite code if provided (skip validation for universal code)
+      if (inviteCode && inviteCode !== UNIVERSAL_INVITE_CODE) {
         const { data: inviterProfile } = await supabase
           .from("profiles")
           .select("invite_code")
@@ -84,6 +87,8 @@ const Register = () => {
           return;
         }
         console.log("Valid inviter found with code:", inviteCode);
+      } else if (inviteCode === UNIVERSAL_INVITE_CODE) {
+        console.log("Using universal invite code:", UNIVERSAL_INVITE_CODE);
       }
 
       // Create profile
