@@ -35,10 +35,15 @@ const Team = () => {
       setProfile(profileData);
 
       // Get level 1 referrals (direct invites)
-      const { data: level1 } = await supabase
+      const { data: level1, error: level1Error } = await supabase
         .from("profiles")
         .select("user_id, invite_code")
         .eq("invited_by", profileData.invite_code);
+
+      if (level1Error) {
+        console.error("Error fetching level 1:", level1Error);
+      }
+      console.log("Level 1 referrals:", level1);
 
       const level1Count = level1?.length || 0;
 

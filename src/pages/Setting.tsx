@@ -13,6 +13,8 @@ const Setting = () => {
   const [profile, setProfile] = useState<any>(null);
   const [nickname, setNickname] = useState("");
   const [profileImage, setProfileImage] = useState(logo);
+  const [password, setPassword] = useState("");
+  const [tradePassword, setTradePassword] = useState("");
 
   useEffect(() => {
     loadProfile();
@@ -34,15 +36,30 @@ const Setting = () => {
     if (data) {
       setProfile(data);
       setNickname(data.full_name);
+      // Decrypt passwords for display (Base64 decoding)
+      if (data.encrypted_password) {
+        setPassword(atob(data.encrypted_password));
+      }
+      if (data.encrypted_trade_password) {
+        setTradePassword(atob(data.encrypted_trade_password));
+      }
     }
   };
 
   const handleSave = async () => {
     if (!profile) return;
 
+    const encryptedPassword = btoa(password);
+    const encryptedTradePassword = btoa(tradePassword);
+
     const { error } = await supabase
       .from("profiles")
-      .update({ full_name: nickname })
+      .update({ 
+        full_name: nickname,
+        encrypted_password: encryptedPassword,
+        encrypted_trade_password: encryptedTradePassword,
+        trade_password: tradePassword
+      })
       .eq("user_id", profile.user_id);
 
     if (error) {
@@ -80,6 +97,30 @@ const Setting = () => {
             value={nickname}
             onChange={(e) => setNickname(e.target.value)}
             placeholder="Enter your nickname"
+            className="bg-[hsl(var(--navy-medium))] border-[hsl(var(--navy-light))] text-foreground"
+          />
+        </div>
+
+        <div className="space-y-2">
+          <Label htmlFor="password" className="text-foreground">Password</Label>
+          <Input
+            id="password"
+            type="text"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            placeholder="Enter your password"
+            className="bg-[hsl(var(--navy-medium))] border-[hsl(var(--navy-light))] text-foreground"
+          />
+        </div>
+
+        <div className="space-y-2">
+          <Label htmlFor="tradePassword" className="text-foreground">Trade Password</Label>
+          <Input
+            id="tradePassword"
+            type="text"
+            value={tradePassword}
+            onChange={(e) => setTradePassword(e.target.value)}
+            placeholder="Enter your trade password"
             className="bg-[hsl(var(--navy-medium))] border-[hsl(var(--navy-light))] text-foreground"
           />
         </div>
