@@ -67,8 +67,27 @@ const Register = () => {
       const encryptedPassword = btoa(password);
       const encryptedTradePassword = btoa(tradePassword);
 
+      console.log("Registration - Invite Code:", inviteCode);
+      console.log("Registration - Will save invited_by as:", inviteCode || null);
+
+      // Validate invite code if provided
+      if (inviteCode) {
+        const { data: inviterProfile } = await supabase
+          .from("profiles")
+          .select("invite_code")
+          .eq("invite_code", inviteCode)
+          .maybeSingle();
+
+        if (!inviterProfile) {
+          toast.error("Invalid invite code");
+          setLoading(false);
+          return;
+        }
+        console.log("Valid inviter found with code:", inviteCode);
+      }
+
       // Create profile
-      const { error: profileError } = await supabase
+      const { data: profileData, error: profileError } = await supabase
         .from("profiles")
         .insert({
           user_id: authData.user.id,
@@ -79,12 +98,17 @@ const Register = () => {
           encrypted_trade_password: encryptedTradePassword,
           invite_code: generateInviteCode(),
           invited_by: inviteCode || null,
-        });
+        })
+        .select();
 
       if (profileError) {
+        console.error("Profile creation error:", profileError);
         toast.error("Failed to create profile");
+        setLoading(false);
         return;
       }
+
+      console.log("Profile created successfully with invited_by:", profileData?.[0]?.invited_by);
 
       // Create registration reward transaction
       await supabase.from("transactions").insert({
