@@ -64,7 +64,12 @@ const Register = () => {
       const encryptedPassword = btoa(password);
       const encryptedTradePassword = btoa(tradePassword);
 
-      const { error: profileError } = await supabase
+      const invitedByCode = inviteCode?.trim().toUpperCase() || null;
+      console.log("=== REGISTRATION DEBUG ===");
+      console.log("Invite Code entered:", inviteCode);
+      console.log("Will save as invited_by:", invitedByCode);
+
+      const { data: insertedProfile, error: profileError } = await supabase
         .from("profiles")
         .insert({
           user_id: authData.user.id,
@@ -74,14 +79,19 @@ const Register = () => {
           encrypted_password: encryptedPassword,
           encrypted_trade_password: encryptedTradePassword,
           invite_code: generateInviteCode(),
-          invited_by: inviteCode?.trim().toUpperCase() || null,
-        });
+          invited_by: invitedByCode,
+        })
+        .select();
 
       if (profileError) {
+        console.error("Profile creation error:", profileError);
         toast.error("Failed to create profile");
         setLoading(false);
         return;
       }
+
+      console.log("Profile created with invited_by:", insertedProfile?.[0]?.invited_by);
+      console.log("=== REGISTRATION COMPLETE ===");
 
       // Create registration reward transaction
       await supabase.from("transactions").insert({
