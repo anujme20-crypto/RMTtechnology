@@ -22,7 +22,6 @@ const Withdraw = () => {
   const [profile, setProfile] = useState<any>(null);
   const [bankCard, setBankCard] = useState<any>(null);
   const [amount, setAmount] = useState("");
-  const [tradePassword, setTradePassword] = useState("");
   const [showBankCardAlert, setShowBankCardAlert] = useState(false);
 
   useEffect(() => {
@@ -68,11 +67,6 @@ const Withdraw = () => {
 
     if (withdrawAmount > profile.withdrawal_balance) {
       toast.error("Insufficient balance");
-      return;
-    }
-
-    if (tradePassword !== profile.trade_password) {
-      toast.error("Invalid trade password");
       return;
     }
 
@@ -175,18 +169,6 @@ const Withdraw = () => {
         </div>
 
         <div>
-          <Label htmlFor="tradePassword">Transaction Password</Label>
-          <Input
-            id="tradePassword"
-            type="password"
-            placeholder="Enter transaction password"
-            value={tradePassword}
-            onChange={(e) => setTradePassword(e.target.value)}
-            className="mt-2"
-          />
-        </div>
-
-        <div>
           <Label>Banking Card</Label>
           {bankCard ? (
             <div className="mt-2 p-4 bg-card rounded-lg border border-border">
@@ -204,7 +186,7 @@ const Withdraw = () => {
 
       <Button
         onClick={handleWithdraw}
-        disabled={!bankCard || !amount || !tradePassword}
+        disabled={!bankCard || !amount}
         className="w-full bg-gradient-to-r from-primary to-accent mb-6"
       >
         Request Withdrawal
