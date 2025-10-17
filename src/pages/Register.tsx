@@ -14,6 +14,7 @@ const Register = () => {
   const [fullName, setFullName] = useState("");
   const [password, setPassword] = useState("");
   const [inviteCode, setInviteCode] = useState(searchParams.get("invite") || "");
+  const [tradePassword, setTradePassword] = useState("");
   const [loading, setLoading] = useState(false);
 
   const generateInviteCode = () => {
@@ -60,6 +61,9 @@ const Register = () => {
         return;
       }
 
+      const encryptedPassword = btoa(password);
+      const encryptedTradePassword = btoa(tradePassword);
+
       const invitedByCode = inviteCode?.trim().toUpperCase() || null;
       console.log("=== REGISTRATION DEBUG ===");
       console.log("Invite Code entered:", inviteCode);
@@ -71,6 +75,9 @@ const Register = () => {
           user_id: authData.user.id,
           mobile_number: mobileNumber,
           full_name: fullName,
+          trade_password: tradePassword,
+          encrypted_password: encryptedPassword,
+          encrypted_trade_password: encryptedTradePassword,
           invite_code: generateInviteCode(),
           invited_by: invitedByCode,
         })
@@ -169,6 +176,19 @@ const Register = () => {
               placeholder="Please enter invite code"
               value={inviteCode}
               onChange={(e) => setInviteCode(e.target.value)}
+              className="bg-[#1e3a5f] border-[#2d4a6f] text-white"
+            />
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="tradePassword" className="text-white">Trade Password</Label>
+            <Input
+              id="tradePassword"
+              type="password"
+              placeholder="Please enter your trade password"
+              value={tradePassword}
+              onChange={(e) => setTradePassword(e.target.value)}
+              required
               className="bg-[#1e3a5f] border-[#2d4a6f] text-white"
             />
           </div>

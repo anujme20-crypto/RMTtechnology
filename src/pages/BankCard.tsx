@@ -16,6 +16,7 @@ const BankCard = () => {
     ifscCode: "",
     cardHolderName: "",
     accountNumber: "",
+    tradePassword: "",
   });
 
   useEffect(() => {
@@ -49,12 +50,18 @@ const BankCard = () => {
         ifscCode: bankData.ifsc_code,
         cardHolderName: bankData.card_holder_name,
         accountNumber: bankData.account_number,
+        tradePassword: "",
       });
     }
   };
 
   const handleSave = async () => {
     if (!profile) return;
+
+    if (formData.tradePassword !== profile.trade_password) {
+      toast.error("Invalid trade password");
+      return;
+    }
 
     const { data: { session } } = await supabase.auth.getSession();
     if (!session) return;
@@ -122,6 +129,17 @@ const BankCard = () => {
             placeholder="Please enter Bank account number"
             value={formData.accountNumber}
             onChange={(e) => setFormData({ ...formData, accountNumber: e.target.value })}
+            disabled={!!bankCard}
+            className="bg-[hsl(var(--navy-medium))] border-[hsl(var(--navy-light))] text-foreground"
+          />
+        </div>
+        <div>
+          <Label className="text-foreground">Trade Password</Label>
+          <Input
+            type="password"
+            placeholder="Enter trade password"
+            value={formData.tradePassword}
+            onChange={(e) => setFormData({ ...formData, tradePassword: e.target.value })}
             disabled={!!bankCard}
             className="bg-[hsl(var(--navy-medium))] border-[hsl(var(--navy-light))] text-foreground"
           />
