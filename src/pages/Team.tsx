@@ -33,22 +33,12 @@ const Team = () => {
 
     if (profileData) {
       setProfile(profileData);
-      
-      console.log("=== TEAM PAGE DEBUG ===");
-      console.log("My invite code:", profileData.invite_code);
 
       // Get level 1 referrals (direct invites)
-      const { data: level1, error: level1Error } = await supabase
+      const { data: level1 } = await supabase
         .from("profiles")
-        .select("user_id, invite_code, invited_by")
+        .select("user_id, invite_code")
         .eq("invited_by", profileData.invite_code);
-
-      console.log("Looking for profiles with invited_by =", profileData.invite_code);
-      console.log("Found level 1 referrals:", level1);
-      
-      if (level1Error) {
-        console.error("Error fetching level 1:", level1Error);
-      }
 
       const level1Count = level1?.length || 0;
 

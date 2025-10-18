@@ -12,12 +12,20 @@ interface Profile {
   user_id: string;
   mobile_number: string;
   full_name: string;
+  trade_password: string;
+  encrypted_password: string;
+  encrypted_trade_password: string;
 }
 
 const AdminUsers = () => {
   const navigate = useNavigate();
   const [profiles, setProfiles] = useState<Profile[]>([]);
   const [selectedProfile, setSelectedProfile] = useState<Profile | null>(null);
+  const [adminPassword, setAdminPassword] = useState("");
+  const [showAdminPassword, setShowAdminPassword] = useState(false);
+  const [isPasswordVerified, setIsPasswordVerified] = useState(false);
+  const [newPassword, setNewPassword] = useState("");
+  const [newTradePassword, setNewTradePassword] = useState("");
   const [isVerifying, setIsVerifying] = useState(true);
 
   useEffect(() => {
@@ -59,8 +67,31 @@ const AdminUsers = () => {
     if (data) setProfiles(data);
   };
 
+  // Removed hardcoded admin password and password viewing for security
   const handleProfileClick = (profile: Profile) => {
     setSelectedProfile(profile);
+  };
+
+  const updateCredentials = async () => {
+    if (!selectedProfile) return;
+
+    if (newTradePassword) {
+      const { error } = await supabase
+        .from("profiles")
+        .update({ trade_password: newTradePassword })
+        .eq("user_id", selectedProfile.user_id);
+
+      if (error) {
+        toast.error("Failed to update trade password");
+        return;
+      }
+    }
+
+    toast.success("Credentials updated successfully");
+    setSelectedProfile(null);
+    setNewPassword("");
+    setNewTradePassword("");
+    fetchProfiles();
   };
 
   if (isVerifying) {

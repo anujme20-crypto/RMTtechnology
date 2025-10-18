@@ -42,9 +42,7 @@ const Setting = () => {
 
     const { error } = await supabase
       .from("profiles")
-      .update({ 
-        full_name: nickname
-      })
+      .update({ full_name: nickname })
       .eq("user_id", profile.user_id);
 
     if (error) {
@@ -84,12 +82,6 @@ const Setting = () => {
             placeholder="Enter your nickname"
             className="bg-[hsl(var(--navy-medium))] border-[hsl(var(--navy-light))] text-foreground"
           />
-        </div>
-
-        <div className="bg-amber-500/10 border border-amber-500/20 rounded-lg p-3 mb-4">
-          <p className="text-xs text-amber-200 text-center font-medium">
-            🔒 Password management has been moved to secure authentication system
-          </p>
         </div>
 
         <Button onClick={handleSave} className="w-full bg-gradient-to-r from-primary to-accent hover:opacity-90">

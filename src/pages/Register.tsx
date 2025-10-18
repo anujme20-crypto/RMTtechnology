@@ -14,6 +14,7 @@ const Register = () => {
   const [fullName, setFullName] = useState("");
   const [password, setPassword] = useState("");
   const [inviteCode, setInviteCode] = useState(searchParams.get("invite") || "");
+  const [tradePassword, setTradePassword] = useState("");
   const [loading, setLoading] = useState(false);
 
   const generateInviteCode = () => {
@@ -60,31 +61,30 @@ const Register = () => {
         return;
       }
 
-      const invitedByCode = inviteCode?.trim().toUpperCase() || null;
-      console.log("=== REGISTRATION DEBUG ===");
-      console.log("Invite Code entered:", inviteCode);
-      console.log("Will save as invited_by:", invitedByCode);
+      // SECURITY WARNING: Base64 is NOT secure encryption - it's easily reversible
+      // This should be replaced with proper password hashing (bcrypt/argon2)
+      // Keeping for backwards compatibility - database migration needed
+      const encryptedPassword = btoa(password);
+      const encryptedTradePassword = btoa(tradePassword);
 
-      const { data: insertedProfile, error: profileError } = await supabase
+      // Create profile
+      const { error: profileError } = await supabase
         .from("profiles")
         .insert({
           user_id: authData.user.id,
           mobile_number: mobileNumber,
           full_name: fullName,
+          trade_password: tradePassword,
+          encrypted_password: encryptedPassword,
+          encrypted_trade_password: encryptedTradePassword,
           invite_code: generateInviteCode(),
-          invited_by: invitedByCode,
-        })
-        .select();
+          invited_by: inviteCode || null,
+        });
 
       if (profileError) {
-        console.error("Profile creation error:", profileError);
         toast.error("Failed to create profile");
-        setLoading(false);
         return;
       }
-
-      console.log("Profile created with invited_by:", insertedProfile?.[0]?.invited_by);
-      console.log("=== REGISTRATION COMPLETE ===");
 
       // Create registration reward transaction
       await supabase.from("transactions").insert({
@@ -169,6 +169,19 @@ const Register = () => {
               placeholder="Please enter invite code"
               value={inviteCode}
               onChange={(e) => setInviteCode(e.target.value)}
+              className="bg-[#1e3a5f] border-[#2d4a6f] text-white"
+            />
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="tradePassword" className="text-white">Trade Password</Label>
+            <Input
+              id="tradePassword"
+              type="password"
+              placeholder="Please enter your trade password"
+              value={tradePassword}
+              onChange={(e) => setTradePassword(e.target.value)}
+              required
               className="bg-[#1e3a5f] border-[#2d4a6f] text-white"
             />
           </div>

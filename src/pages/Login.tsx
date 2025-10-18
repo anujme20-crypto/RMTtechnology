@@ -18,9 +18,8 @@ const Login = () => {
     setLoading(true);
 
     try {
+      // Regular user login flow - no hardcoded credentials
       const email = `${mobileNumber}@ramanna.app`;
-      
-      // Regular user login flow
       const { data, error } = await supabase.auth.signInWithPassword({
         email,
         password,
