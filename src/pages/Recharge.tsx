@@ -53,28 +53,31 @@ const Recharge = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#0a1628] p-4">
-      <div className="flex items-center gap-3 mb-6">
-        <Button variant="ghost" size="icon" onClick={() => navigate(-1)} className="text-white hover:bg-[#1e3a5f]">
+    <div className="min-h-screen bg-gradient-to-br from-[#0a0e1a] via-[#1a1f35] to-[#0a0e1a] p-4">
+      <div className="flex items-center gap-3 mb-6 animate-slide-up">
+        <Button variant="ghost" size="icon" onClick={() => navigate(-1)} className="glass-effect text-white hover:bg-purple-500/20 transform hover:scale-110 transition-all">
           <ArrowLeft />
         </Button>
-        <h1 className="text-2xl font-bold text-white">Recharge</h1>
+        <h1 className="text-3xl font-bold gradient-text">Recharge</h1>
+      </div>
+
+      <div className="mb-6 glass-effect rounded-2xl p-6 border border-purple-500/30 animate-fade-scale">
+        <p className="text-sm text-gray-400 mb-2">Current Balance</p>
+        <p className="text-4xl font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">₹{profile?.recharge_balance?.toFixed(2)}</p>
       </div>
 
       <div className="mb-6">
-        <p className="text-sm text-white/60 mb-2">Account Balance</p>
-        <p className="text-3xl font-bold text-blue-400">₹{profile?.recharge_balance?.toFixed(2)}</p>
-      </div>
-
-      <div className="mb-6">
-        <Label className="mb-3 block text-white">Quick Amount</Label>
+        <Label className="mb-3 block text-white font-semibold text-lg">Quick Amount</Label>
         <div className="grid grid-cols-3 gap-3">
-          {quickAmounts.map((quickAmount) => (
+          {quickAmounts.map((quickAmount, idx) => (
             <Button
               key={quickAmount}
               variant="outline"
               onClick={() => setAmount(quickAmount.toString())}
-              className={`bg-[#2d4a6f] border-[#3a5f95] text-white hover:bg-[#3a5f95] ${amount === quickAmount.toString() ? "border-blue-500" : ""}`}
+              className={`glass-effect border-purple-500/30 text-white hover:bg-purple-500/20 font-bold h-16 transform hover:scale-110 transition-all animate-fade-scale ${
+                amount === quickAmount.toString() ? "bg-gradient-to-r from-purple-600 to-blue-600 border-purple-500" : ""
+              }`}
+              style={{ animationDelay: `${idx * 0.05}s` }}
             >
               ₹{quickAmount}
             </Button>
@@ -82,15 +85,15 @@ const Recharge = () => {
         </div>
       </div>
 
-      <div className="mb-6">
-        <Label htmlFor="amount" className="text-white">Deposit Amount</Label>
+      <div className="mb-6 animate-fade-scale" style={{ animationDelay: '0.3s' }}>
+        <Label htmlFor="amount" className="text-white font-semibold text-lg mb-3 block">Deposit Amount</Label>
         <Input
           id="amount"
           type="number"
-          placeholder="Enter deposit amount"
+          placeholder="Enter amount"
           value={amount}
           onChange={(e) => setAmount(e.target.value)}
-          className="mt-2 bg-[#1e3a5f] border-[#2d4a6f] text-white"
+          className="glass-effect border-purple-500/30 text-white placeholder:text-gray-500 h-14 text-lg"
         />
       </div>
 
@@ -124,9 +127,10 @@ const Recharge = () => {
       <Button
         onClick={handleDeposit}
         disabled={!amount || parseFloat(amount) < 390 || !paymentMethod}
-        className="w-full bg-blue-500 hover:bg-blue-600 text-white"
+        className="w-full bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white font-bold py-6 rounded-xl shadow-lg hover:shadow-purple-500/50 transition-all duration-300 transform hover:scale-105 animate-fade-scale"
+        style={{ animationDelay: '0.6s' }}
       >
-        Deposit
+        Proceed to Payment
       </Button>
     </div>
   );

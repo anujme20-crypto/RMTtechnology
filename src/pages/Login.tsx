@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
-import earthMap from "@/assets/earth-map.png";
+import logo from "@/assets/seedworks-logo.png";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -70,59 +70,74 @@ const Login = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#0a1628] flex flex-col">
-      <div className="relative w-full h-48 overflow-hidden">
-        <img src={earthMap} alt="Earth Map" className="w-full h-full object-cover opacity-40" />
-      </div>
+    <div className="min-h-screen bg-gradient-to-br from-[#0a0e1a] via-[#1a1f35] to-[#0a0e1a] flex flex-col relative overflow-hidden">
+      {/* Animated background elements */}
+      <div className="absolute top-20 left-10 w-64 h-64 bg-purple-600/20 rounded-full blur-3xl animate-float"></div>
+      <div className="absolute bottom-20 right-10 w-64 h-64 bg-blue-600/20 rounded-full blur-3xl animate-float" style={{ animationDelay: '1s' }}></div>
       
-      <div className="flex-1 px-6 py-8">
-        <h1 className="text-2xl font-bold text-center mb-2 text-white">
-          Technology Group of Institute
+      <div className="flex-1 px-6 py-12 relative z-10">
+        {/* Logo */}
+        <div className="flex justify-center mb-8 animate-fade-scale">
+          <div className="relative">
+            <img src={logo} alt="Seedworks" className="w-32 h-32 rounded-3xl shadow-2xl animate-glow" />
+            <div className="absolute inset-0 bg-gradient-to-br from-purple-500/30 to-blue-500/30 rounded-3xl blur-xl"></div>
+          </div>
+        </div>
+
+        <h1 className="text-4xl font-bold text-center mb-3 animate-slide-up">
+          <span className="gradient-text">Seedworks</span>
         </h1>
+        <p className="text-center text-gray-400 mb-8 animate-slide-up" style={{ animationDelay: '0.1s' }}>
+          Your Gateway to Financial Freedom
+        </p>
         
-        <form onSubmit={handleLogin} className="mt-8 space-y-6">
-          <div className="space-y-2">
-            <Label htmlFor="mobile" className="text-white">Mobile Number</Label>
-            <div className="flex gap-2">
-              <span className="flex items-center px-3 py-2 bg-[#1e3a5f] border border-[#2d4a6f] rounded-lg text-white/70">
+        <form onSubmit={handleLogin} className="space-y-5 animate-slide-up" style={{ animationDelay: '0.2s' }}>
+          <div className="space-y-3">
+            <Label htmlFor="mobile" className="text-gray-300 font-medium">Mobile Number</Label>
+            <div className="flex gap-3">
+              <div className="glass-effect px-4 py-3 rounded-xl text-white font-semibold">
                 +91
-              </span>
+              </div>
               <Input
                 id="mobile"
                 type="tel"
-                placeholder="Please enter mobile number"
+                placeholder="Enter your number"
                 value={mobileNumber}
                 onChange={(e) => setMobileNumber(e.target.value)}
                 required
-                className="flex-1 bg-[#1e3a5f] border-[#2d4a6f] text-white"
+                className="flex-1 glass-effect border-purple-500/30 text-white placeholder:text-gray-500 focus:border-purple-500 rounded-xl h-12"
               />
             </div>
           </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="password" className="text-white">Password</Label>
+          <div className="space-y-3">
+            <Label htmlFor="password" className="text-gray-300 font-medium">Password</Label>
             <Input
               id="password"
               type="password"
-              placeholder="Please enter your password"
+              placeholder="Enter your password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
-              className="bg-[#1e3a5f] border-[#2d4a6f] text-white"
+              className="glass-effect border-purple-500/30 text-white placeholder:text-gray-500 focus:border-purple-500 rounded-xl h-12"
             />
           </div>
 
-          <Button type="submit" className="w-full bg-blue-500 hover:bg-blue-600 text-white" disabled={loading}>
+          <Button 
+            type="submit" 
+            className="w-full bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white font-bold py-6 rounded-xl shadow-lg hover:shadow-purple-500/50 transition-all duration-300 transform hover:scale-105" 
+            disabled={loading}
+          >
             {loading ? "Logging in..." : "Login Now"}
           </Button>
 
           <Button
             type="button"
             variant="outline"
-            className="w-full bg-transparent border-blue-500 text-blue-400 hover:bg-blue-500/10"
+            className="w-full glass-effect border-2 border-purple-500/50 text-purple-400 hover:bg-purple-500/10 font-semibold py-6 rounded-xl transition-all duration-300"
             onClick={() => navigate("/register")}
           >
-            Register
+            Create Account
           </Button>
         </form>
       </div>

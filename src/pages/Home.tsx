@@ -3,20 +3,20 @@ import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import logo from "@/assets/logo.png";
-import { Bell, Wallet, CreditCard, Users, Send, Home as HomeIcon, TrendingUp, FileText, BookOpen, User } from "lucide-react";
-import { TelegramPopup } from "@/components/TelegramPopup";
+import logo from "@/assets/seedworks-logo.png";
+import { Bell, Wallet, CreditCard, Users, Send, Home as HomeIcon, TrendingUp, FileText, BookOpen, User, Gift, Sparkles } from "lucide-react";
+import { WelcomePopup } from "@/components/WelcomePopup";
 
 const Home = () => {
   const navigate = useNavigate();
   const [profile, setProfile] = useState<any>(null);
   const [loading, setLoading] = useState(true);
-  const [showTelegramPopup, setShowTelegramPopup] = useState(false);
+  const [showWelcomePopup, setShowWelcomePopup] = useState(false);
   const [teamStats, setTeamStats] = useState({ level1: 0, level1Active: 0, level2: 0, level2Active: 0 });
 
   useEffect(() => {
     checkAuth();
-    const timer = setTimeout(() => setShowTelegramPopup(true), 1000);
+    const timer = setTimeout(() => setShowWelcomePopup(true), 500);
     return () => clearTimeout(timer);
   }, []);
 
@@ -165,62 +165,85 @@ const Home = () => {
   }
 
   return (
-    <div className="min-h-screen bg-[hsl(var(--navy-dark))] pb-20">
+    <div className="min-h-screen bg-gradient-to-br from-[#0a0e1a] via-[#1a1f35] to-[#0a0e1a] pb-20">
       {/* Header */}
-      <div className="bg-gradient-to-r from-blue-600 to-blue-700 p-4 rounded-b-3xl">
-        <div className="flex items-center gap-3 mb-4">
-          <img src={logo} alt="Logo" className="w-12 h-12 rounded-full border-2 border-white/30" />
-          <div className="flex-1">
-            <div className="text-white font-semibold text-lg">{profile?.full_name}</div>
-            <div className="text-white/80 text-sm">+91 {profile?.mobile_number}</div>
+      <div className="relative bg-gradient-to-r from-purple-600 via-blue-600 to-purple-600 p-6 rounded-b-[3rem] animate-shimmer overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent animate-shimmer"></div>
+        <div className="relative flex items-center gap-4 mb-4">
+          <div className="relative animate-float">
+            <img src={logo} alt="Seedworks" className="w-16 h-16 rounded-2xl border-2 border-white/30 shadow-xl" />
+            <div className="absolute -top-1 -right-1 w-5 h-5 bg-green-400 rounded-full border-2 border-white animate-pulse"></div>
           </div>
-          <button onClick={handleTelegram} className="text-white/80 hover:text-white">
-            <Bell className="w-6 h-6" />
+          <div className="flex-1">
+            <div className="text-white font-bold text-xl flex items-center gap-2">
+              {profile?.full_name}
+              <Sparkles className="w-4 h-4 text-yellow-300" />
+            </div>
+            <div className="text-white/90 text-sm font-medium">ID: {profile?.mobile_number}</div>
+          </div>
+          <button onClick={handleTelegram} className="text-white/80 hover:text-white transition-all transform hover:scale-110 relative">
+            <Bell className="w-7 h-7" />
+            <span className="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full animate-pulse"></span>
           </button>
+        </div>
+        
+        {/* Seedworks Branding */}
+        <div className="relative text-center">
+          <h2 className="text-2xl font-bold text-white mb-1">Seedworks</h2>
+          <p className="text-white/80 text-sm">Your Financial Growth Partner</p>
         </div>
       </div>
 
       {/* Balance Cards */}
-      <div className="p-4 grid grid-cols-3 gap-2">
-        <div className="bg-[hsl(var(--navy-medium))] rounded-xl p-3 text-center">
-          <p className="text-xl font-bold text-foreground mb-1">₹{profile?.recharge_balance?.toFixed(2) || "50"}</p>
-          <p className="text-xs text-muted-foreground leading-tight">Recharge<br/>Balance</p>
+      <div className="p-4 grid grid-cols-3 gap-3 -mt-8">
+        <div className="glass-effect rounded-2xl p-4 text-center animate-fade-scale transform hover:scale-105 transition-all duration-300">
+          <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-purple-500 rounded-full mx-auto mb-2 flex items-center justify-center animate-glow">
+            <Wallet className="w-6 h-6 text-white" />
+          </div>
+          <p className="text-2xl font-bold text-white mb-1">₹{profile?.recharge_balance?.toFixed(2) || "50"}</p>
+          <p className="text-xs text-gray-400">Recharge</p>
         </div>
-        <div className="bg-[hsl(var(--navy-medium))] rounded-xl p-3 text-center">
-          <p className="text-xl font-bold text-foreground mb-1">₹{profile?.withdrawal_balance?.toFixed(2) || "0"}</p>
-          <p className="text-xs text-muted-foreground leading-tight">Withdraw<br/>Balance</p>
+        <div className="glass-effect rounded-2xl p-4 text-center animate-fade-scale transform hover:scale-105 transition-all duration-300" style={{ animationDelay: '0.1s' }}>
+          <div className="w-12 h-12 bg-gradient-to-br from-green-500 to-emerald-500 rounded-full mx-auto mb-2 flex items-center justify-center animate-glow">
+            <CreditCard className="w-6 h-6 text-white" />
+          </div>
+          <p className="text-2xl font-bold text-white mb-1">₹{profile?.withdrawal_balance?.toFixed(2) || "0"}</p>
+          <p className="text-xs text-gray-400">Withdraw</p>
         </div>
-        <div className="bg-[hsl(var(--navy-medium))] rounded-xl p-3 text-center">
-          <p className="text-xl font-bold text-foreground mb-1">₹{profile?.product_income?.toFixed(2) || "0.00"}</p>
-          <p className="text-xs text-muted-foreground leading-tight">Product Income</p>
+        <div className="glass-effect rounded-2xl p-4 text-center animate-fade-scale transform hover:scale-105 transition-all duration-300" style={{ animationDelay: '0.2s' }}>
+          <div className="w-12 h-12 bg-gradient-to-br from-orange-500 to-red-500 rounded-full mx-auto mb-2 flex items-center justify-center animate-glow">
+            <TrendingUp className="w-6 h-6 text-white" />
+          </div>
+          <p className="text-2xl font-bold text-white mb-1">₹{profile?.product_income?.toFixed(2) || "0.00"}</p>
+          <p className="text-xs text-gray-400">Income</p>
         </div>
       </div>
 
       {/* Quick Actions */}
-      <div className="px-4 grid grid-cols-4 gap-3 mb-6">
-        <button onClick={() => navigate("/recharge")} className="flex flex-col items-center gap-2">
-          <div className="w-14 h-14 bg-primary/10 rounded-xl flex items-center justify-center border border-primary/20">
-            <Wallet className="w-6 h-6 text-primary" />
+      <div className="px-4 grid grid-cols-4 gap-4 mb-6">
+        <button onClick={() => navigate("/recharge")} className="flex flex-col items-center gap-2 transform hover:scale-110 transition-all duration-300">
+          <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl flex items-center justify-center shadow-lg hover:shadow-blue-500/50 animate-fade-scale">
+            <Wallet className="w-7 h-7 text-white" />
           </div>
-          <span className="text-xs text-foreground">Recharge</span>
+          <span className="text-xs text-white font-medium">Recharge</span>
         </button>
-        <button onClick={() => navigate("/withdraw")} className="flex flex-col items-center gap-2">
-          <div className="w-14 h-14 bg-primary/10 rounded-xl flex items-center justify-center border border-primary/20">
-            <CreditCard className="w-6 h-6 text-primary" />
+        <button onClick={() => navigate("/withdraw")} className="flex flex-col items-center gap-2 transform hover:scale-110 transition-all duration-300">
+          <div className="w-16 h-16 bg-gradient-to-br from-green-500 to-green-600 rounded-2xl flex items-center justify-center shadow-lg hover:shadow-green-500/50 animate-fade-scale" style={{ animationDelay: '0.1s' }}>
+            <CreditCard className="w-7 h-7 text-white" />
           </div>
-          <span className="text-xs text-foreground">Withdraw</span>
+          <span className="text-xs text-white font-medium">Withdraw</span>
         </button>
-        <button onClick={() => navigate("/team")} className="flex flex-col items-center gap-2">
-          <div className="w-14 h-14 bg-primary/10 rounded-xl flex items-center justify-center border border-primary/20">
-            <Users className="w-6 h-6 text-primary" />
+        <button onClick={() => navigate("/team")} className="flex flex-col items-center gap-2 transform hover:scale-110 transition-all duration-300">
+          <div className="w-16 h-16 bg-gradient-to-br from-purple-500 to-purple-600 rounded-2xl flex items-center justify-center shadow-lg hover:shadow-purple-500/50 animate-fade-scale" style={{ animationDelay: '0.2s' }}>
+            <Users className="w-7 h-7 text-white" />
           </div>
-          <span className="text-xs text-foreground">Team</span>
+          <span className="text-xs text-white font-medium">Team</span>
         </button>
-        <button onClick={() => toast.info("Work is underway on this")} className="flex flex-col items-center gap-2">
-          <div className="w-14 h-14 bg-primary/10 rounded-xl flex items-center justify-center border border-primary/20">
-            <Send className="w-6 h-6 text-primary" />
+        <button onClick={handleTelegram} className="flex flex-col items-center gap-2 transform hover:scale-110 transition-all duration-300">
+          <div className="w-16 h-16 bg-gradient-to-br from-pink-500 to-pink-600 rounded-2xl flex items-center justify-center shadow-lg hover:shadow-pink-500/50 animate-fade-scale" style={{ animationDelay: '0.3s' }}>
+            <Send className="w-7 h-7 text-white" />
           </div>
-          <span className="text-xs text-foreground">Telegram</span>
+          <span className="text-xs text-white font-medium">Support</span>
         </button>
       </div>
 
@@ -314,7 +337,7 @@ const Home = () => {
         </Button>
       </div>
 
-      <TelegramPopup open={showTelegramPopup} onOpenChange={setShowTelegramPopup} />
+      <WelcomePopup open={showWelcomePopup} onOpenChange={setShowWelcomePopup} />
 
       {/* Bottom Navigation */}
       <div className="fixed bottom-0 left-0 right-0 bg-[hsl(var(--navy-medium))] flex justify-around p-2 shadow-lg">

@@ -159,92 +159,107 @@ const Team = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background p-4">
-      <div className="flex items-center gap-3 mb-6">
-        <Button variant="ghost" size="icon" onClick={() => navigate(-1)}>
+    <div className="min-h-screen bg-gradient-to-br from-[#0a0e1a] via-[#1a1f35] to-[#0a0e1a] p-4">
+      <div className="flex items-center gap-3 mb-6 animate-slide-up">
+        <Button variant="ghost" size="icon" onClick={() => navigate(-1)} className="glass-effect text-white hover:bg-purple-500/20 transform hover:scale-110 transition-all">
           <ArrowLeft />
         </Button>
-        <h1 className="text-2xl font-bold">Team</h1>
+        <h1 className="text-3xl font-bold gradient-text">Team Overview</h1>
       </div>
 
       <div className="grid grid-cols-2 gap-4 mb-6">
-        <div className="bg-card rounded-lg p-4 border border-border">
-          <p className="text-sm text-muted-foreground mb-1">Total Commission</p>
-          <p className="text-2xl font-bold text-primary">₹{profile?.total_commission?.toFixed(2)}</p>
+        <div className="glass-effect rounded-2xl p-5 border border-purple-500/30 animate-fade-scale transform hover:scale-105 transition-all">
+          <p className="text-sm text-gray-400 mb-2">Total Commission</p>
+          <p className="text-3xl font-bold bg-gradient-to-r from-green-400 to-emerald-400 bg-clip-text text-transparent">₹{profile?.total_commission?.toFixed(2)}</p>
         </div>
-        <div className="bg-card rounded-lg p-4 border border-border">
-          <p className="text-sm text-muted-foreground mb-1">Invite Code</p>
+        <div className="glass-effect rounded-2xl p-5 border border-blue-500/30 animate-fade-scale transform hover:scale-105 transition-all" style={{ animationDelay: '0.1s' }}>
+          <p className="text-sm text-gray-400 mb-2">Invite Code</p>
           <div className="flex items-center gap-2">
-            <p className="text-lg font-mono font-bold">{profile?.invite_code}</p>
-            <Button size="icon" variant="ghost" onClick={copyInviteLink}>
-              <Copy className="w-4 h-4" />
+            <p className="text-xl font-mono font-bold text-white">{profile?.invite_code}</p>
+            <Button size="icon" variant="ghost" onClick={copyInviteLink} className="hover:bg-blue-500/20 transform hover:scale-110 transition-all">
+              <Copy className="w-4 h-4 text-blue-400" />
             </Button>
           </div>
         </div>
       </div>
 
-      <div className="space-y-3">
-        <h2 className="text-lg font-semibold mb-3">Team Levels</h2>
+      <div className="space-y-4">
+        <h2 className="text-xl font-bold text-white mb-4 uppercase tracking-wider">Team Levels</h2>
         
-        <div className="bg-card rounded-lg p-4 border border-border">
+        <div className="glass-effect rounded-2xl p-5 border border-purple-500/30 transform hover:scale-105 transition-all animate-fade-scale">
           <div className="grid grid-cols-4 gap-3 text-center">
             <div>
-              <p className="text-xs text-muted-foreground mb-1">Level</p>
-              <p className="font-semibold">LV1</p>
+              <div className="w-16 h-16 bg-gradient-to-br from-purple-500 to-purple-600 rounded-2xl mx-auto mb-2 flex items-center justify-center animate-glow shadow-lg">
+                <p className="font-bold text-white text-lg">LV1</p>
+              </div>
+              <p className="text-xs text-gray-400 mb-1">Rebate</p>
+              <p className="font-bold text-green-400 text-lg">35%</p>
             </div>
             <div>
-              <p className="text-xs text-muted-foreground mb-1">Rebate</p>
-              <p className="font-semibold text-success">35%</p>
+              <p className="text-xs text-gray-400 mb-2">Total Invite</p>
+              <p className="text-2xl font-bold text-white">{teamStats.level1}</p>
             </div>
             <div>
-              <p className="text-xs text-muted-foreground mb-1">Total Invite</p>
-              <p className="font-semibold">{teamStats.level1}</p>
+              <p className="text-xs text-gray-400 mb-2">Active</p>
+              <p className="text-2xl font-bold text-green-400">{teamStats.level1Active}</p>
             </div>
             <div>
-              <p className="text-xs text-muted-foreground mb-1">Active</p>
-              <p className="font-semibold">{teamStats.level1Active}</p>
+              <p className="text-xs text-gray-400 mb-2">Status</p>
+              <div className="inline-flex px-3 py-1 bg-green-500/20 rounded-full">
+                <p className="text-xs font-semibold text-green-400">Active</p>
+              </div>
             </div>
           </div>
         </div>
 
-        <div className="bg-card rounded-lg p-4 border border-border">
+        <div className="glass-effect rounded-2xl p-5 border border-blue-500/30 transform hover:scale-105 transition-all animate-fade-scale" style={{ animationDelay: '0.1s' }}>
           <div className="grid grid-cols-4 gap-3 text-center">
             <div>
-              <p className="text-xs text-muted-foreground mb-1">Level</p>
-              <p className="font-semibold">LV2</p>
+              <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl mx-auto mb-2 flex items-center justify-center animate-glow shadow-lg">
+                <p className="font-bold text-white text-lg">LV2</p>
+              </div>
+              <p className="text-xs text-gray-400 mb-1">Rebate</p>
+              <p className="font-bold text-green-400 text-lg">2%</p>
             </div>
             <div>
-              <p className="text-xs text-muted-foreground mb-1">Rebate</p>
-              <p className="font-semibold text-success">2%</p>
+              <p className="text-xs text-gray-400 mb-2">Total Invite</p>
+              <p className="text-2xl font-bold text-white">{teamStats.level2}</p>
             </div>
             <div>
-              <p className="text-xs text-muted-foreground mb-1">Total Invite</p>
-              <p className="font-semibold">{teamStats.level2}</p>
+              <p className="text-xs text-gray-400 mb-2">Active</p>
+              <p className="text-2xl font-bold text-green-400">{teamStats.level2Active}</p>
             </div>
             <div>
-              <p className="text-xs text-muted-foreground mb-1">Active</p>
-              <p className="font-semibold">{teamStats.level2Active}</p>
+              <p className="text-xs text-gray-400 mb-2">Status</p>
+              <div className="inline-flex px-3 py-1 bg-blue-500/20 rounded-full">
+                <p className="text-xs font-semibold text-blue-400">Growing</p>
+              </div>
             </div>
           </div>
         </div>
 
-        <div className="bg-card rounded-lg p-4 border border-border">
+        <div className="glass-effect rounded-2xl p-5 border border-orange-500/30 transform hover:scale-105 transition-all animate-fade-scale" style={{ animationDelay: '0.2s' }}>
           <div className="grid grid-cols-4 gap-3 text-center">
             <div>
-              <p className="text-xs text-muted-foreground mb-1">Level</p>
-              <p className="font-semibold">LV3</p>
+              <div className="w-16 h-16 bg-gradient-to-br from-orange-500 to-orange-600 rounded-2xl mx-auto mb-2 flex items-center justify-center animate-glow shadow-lg">
+                <p className="font-bold text-white text-lg">LV3</p>
+              </div>
+              <p className="text-xs text-gray-400 mb-1">Rebate</p>
+              <p className="font-bold text-green-400 text-lg">1%</p>
             </div>
             <div>
-              <p className="text-xs text-muted-foreground mb-1">Rebate</p>
-              <p className="font-semibold text-success">1%</p>
+              <p className="text-xs text-gray-400 mb-2">Total Invite</p>
+              <p className="text-2xl font-bold text-white">{teamStats.level3}</p>
             </div>
             <div>
-              <p className="text-xs text-muted-foreground mb-1">Total Invite</p>
-              <p className="font-semibold">{teamStats.level3}</p>
+              <p className="text-xs text-gray-400 mb-2">Active</p>
+              <p className="text-2xl font-bold text-green-400">{teamStats.level3Active}</p>
             </div>
             <div>
-              <p className="text-xs text-muted-foreground mb-1">Active</p>
-              <p className="font-semibold">{teamStats.level3Active}</p>
+              <p className="text-xs text-gray-400 mb-2">Status</p>
+              <div className="inline-flex px-3 py-1 bg-orange-500/20 rounded-full">
+                <p className="text-xs font-semibold text-orange-400">Expanding</p>
+              </div>
             </div>
           </div>
         </div>

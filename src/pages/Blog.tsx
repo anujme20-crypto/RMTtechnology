@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Bell } from "lucide-react";
 import { RulePopup } from "@/components/RulePopup";
-import logo from "@/assets/logo.png";
+import logo from "@/assets/seedworks-logo.png";
 import BottomNav from "@/components/BottomNav";
 import LoadingScreen from "@/components/LoadingScreen";
 
@@ -21,13 +21,13 @@ const Blog = () => {
   }
 
   return (
-    <div className="min-h-screen bg-[hsl(var(--navy-dark))] p-4 pb-20">
-      <div className="flex items-center justify-between mb-6">
+    <div className="min-h-screen bg-gradient-to-br from-[#0a0e1a] via-[#1a1f35] to-[#0a0e1a] p-4 pb-20">
+      <div className="flex items-center justify-between mb-6 animate-slide-up">
         <div className="flex items-center gap-3">
-          <img src={logo} alt="Ramanna" className="w-10 h-10 rounded-full" />
-          <h2 className="text-sm font-semibold text-foreground">Technology Group of Institute</h2>
+          <img src={logo} alt="Seedworks" className="w-12 h-12 rounded-2xl shadow-lg animate-glow" />
+          <h2 className="text-lg font-bold text-white">Seedworks Blog</h2>
         </div>
-        <Button variant="ghost" size="icon" onClick={handleTelegram} className="text-foreground hover:bg-[hsl(var(--navy-light))]">
+        <Button variant="ghost" size="icon" onClick={handleTelegram} className="text-white hover:bg-purple-500/20 transform hover:scale-110 transition-all">
           <Bell />
         </Button>
       </div>
