@@ -70,74 +70,60 @@ const Login = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#0a0e1a] via-[#1a1f35] to-[#0a0e1a] flex flex-col relative overflow-hidden">
-      {/* Animated background elements */}
-      <div className="absolute top-20 left-10 w-64 h-64 bg-purple-600/20 rounded-full blur-3xl animate-float"></div>
-      <div className="absolute bottom-20 right-10 w-64 h-64 bg-blue-600/20 rounded-full blur-3xl animate-float" style={{ animationDelay: '1s' }}></div>
-      
-      <div className="flex-1 px-6 py-12 relative z-10">
+    <div className="min-h-screen bg-[#f5f5f5] flex flex-col">
+      <div className="flex-1 px-6 py-12">
         {/* Logo */}
-        <div className="flex justify-center mb-8 animate-fade-scale">
-          <div className="relative">
-            <img src={logo} alt="Seedworks" className="w-32 h-32 rounded-3xl shadow-2xl animate-glow" />
-            <div className="absolute inset-0 bg-gradient-to-br from-purple-500/30 to-blue-500/30 rounded-3xl blur-xl"></div>
-          </div>
+        <div className="flex justify-center mb-12">
+          <img src={logo} alt="Seedworks" className="w-24 h-24 object-contain" />
         </div>
-
-        <h1 className="text-4xl font-bold text-center mb-3 animate-slide-up">
-          <span className="gradient-text">Seedworks</span>
-        </h1>
-        <p className="text-center text-gray-400 mb-8 animate-slide-up" style={{ animationDelay: '0.1s' }}>
-          Your Gateway to Financial Freedom
-        </p>
         
-        <form onSubmit={handleLogin} className="space-y-5 animate-slide-up" style={{ animationDelay: '0.2s' }}>
-          <div className="space-y-3">
-            <Label htmlFor="mobile" className="text-gray-300 font-medium">Mobile Number</Label>
+        <form onSubmit={handleLogin} className="space-y-6">
+          <div className="space-y-2">
+            <Label htmlFor="mobile" className="text-gray-700 font-medium text-sm">Phone Number</Label>
             <div className="flex gap-3">
-              <div className="glass-effect px-4 py-3 rounded-xl text-white font-semibold">
+              <div className="bg-white px-4 py-3 rounded-xl text-gray-800 font-semibold border border-gray-200 flex items-center">
                 +91
               </div>
               <Input
                 id="mobile"
                 type="tel"
-                placeholder="Enter your number"
+                placeholder="Please enter your phone number"
                 value={mobileNumber}
                 onChange={(e) => setMobileNumber(e.target.value)}
                 required
-                className="flex-1 glass-effect border-purple-500/30 text-white placeholder:text-gray-500 focus:border-purple-500 rounded-xl h-12"
+                className="flex-1 bg-white border-gray-200 text-gray-800 placeholder:text-gray-400 focus:border-[#0ea5e9] rounded-xl h-12"
               />
             </div>
           </div>
 
-          <div className="space-y-3">
-            <Label htmlFor="password" className="text-gray-300 font-medium">Password</Label>
+          <div className="space-y-2">
+            <Label htmlFor="password" className="text-gray-700 font-medium text-sm">Login Password</Label>
             <Input
               id="password"
               type="password"
-              placeholder="Enter your password"
+              placeholder="Login Password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
-              className="glass-effect border-purple-500/30 text-white placeholder:text-gray-500 focus:border-purple-500 rounded-xl h-12"
+              className="bg-white border-gray-200 text-gray-800 placeholder:text-gray-400 focus:border-[#0ea5e9] rounded-xl h-12"
             />
           </div>
 
           <Button 
             type="submit" 
-            className="w-full bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white font-bold py-6 rounded-xl shadow-lg hover:shadow-purple-500/50 transition-all duration-300 transform hover:scale-105" 
+            className="w-full bg-[#22c55e] hover:bg-[#16a34a] text-white font-bold py-6 rounded-2xl shadow-lg transition-all duration-300" 
             disabled={loading}
           >
-            {loading ? "Logging in..." : "Login Now"}
+            {loading ? "Logging in..." : "Sign In"}
           </Button>
 
           <Button
             type="button"
             variant="outline"
-            className="w-full glass-effect border-2 border-purple-500/50 text-purple-400 hover:bg-purple-500/10 font-semibold py-6 rounded-xl transition-all duration-300"
+            className="w-full bg-white border-2 border-gray-200 text-gray-700 hover:bg-gray-50 font-semibold py-6 rounded-2xl transition-all duration-300"
             onClick={() => navigate("/register")}
           >
-            Create Account
+            Register
           </Button>
         </form>
       </div>
